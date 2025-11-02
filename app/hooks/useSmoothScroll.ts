@@ -8,8 +8,8 @@ import { CameraState } from "../types/camera";
 const CAMERA_STATES: CameraState[] = [
   {
     // Section 1 - Base State
-    position: { x: 72.75, y: 599.19, z: -5.24 },
-    rotation: { x: -23.75, y: 23.4, z: 13.57 },
+    position: { x: 80.16, y: 597.14, z: 0.72 },
+    rotation: { x: -21.75, y: 26.92, z: 13.89 },
   },
   {
     // Section 2 - State 2
@@ -23,8 +23,8 @@ const CAMERA_STATES: CameraState[] = [
   },
   {
     // Section 4 - State 4
-    position: { x: -452.09, y: 744.93, z: 773.59 },
-    rotation: { x: -27.93, y: -24.89, z: -12.58 },
+    position: { x: -310.63, y: 742.62, z: 1011.71 },
+    rotation: { x: -22.19, y: -14.06, z: -5.66 },
   },
 ];
 

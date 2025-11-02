@@ -29,7 +29,7 @@ export default function WallNav({ activeIndex }: WallNavProps) {
         </span>
       </motion.div>
 
-      {/* Left Bottom - Lore */}
+      {/* Left Bottom - Concepts */}
       <motion.div
         className="absolute left-8 bottom-16 transform -rotate-90 origin-center"
         animate={{

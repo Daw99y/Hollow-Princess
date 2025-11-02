@@ -3,13 +3,12 @@ export default function Section1() {
     <section
       id="section-1"
       data-section="1"
-      className="relative z-10 h-screen min-h-screen w-full"
+      className="relative z-10 h-screen min-h-screen w-full flex items-center justify-center"
     >
-      <div className="flex h-full items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-4xl font-light tracking-wide text-white opacity-95">Breathe In</h2>
-          <p className="mt-4 text-white text-sm opacity-75">Camera Position: (446.78, 852.52, 499.06)</p>
-        </div>
+      <div className="text-center animate-fade-in">
+        <h2 className="text-4xl font-geist-sans font-light tracking-wide text-white opacity-95 mb-4"></h2>
+        <p className="font-geist-sans text-sm text-white opacity-75 tracking-wider"></p>
+        {/* Camera Position: (446.78, 852.52, 499.06) */}
       </div>
     </section>
   );
