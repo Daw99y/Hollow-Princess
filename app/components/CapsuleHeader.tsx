@@ -21,7 +21,7 @@ export default function CapsuleHeader() {
           filter: `blur(${titleBlur}px)`,
         }}
       >
-        Never Ending Swarm
+        Hollow Princess
       </motion.h1>
       <motion.h2
         className="font-geist-sans text-xs text-neutral-500/70 dark:text-neutral-400/70 tracking-widest font-light mt-2"
@@ -30,7 +30,6 @@ export default function CapsuleHeader() {
           scale: titleScale,
         }}
       ></motion.h2>
-      <div className="w-8 h-px bg-neutral-500/10 dark:bg-neutral-400/10 mx-auto mt-3"></div>
     </motion.div>
   );
 }

@@ -10,13 +10,13 @@ import { useSmoothScroll } from "./hooks/useSmoothScroll";
 import { useActiveSection } from "./hooks/useActiveSection";
 
 export default function Home() {
-  const { cameraState } = useSmoothScroll();
+  const { cameraState, scrollToSection } = useSmoothScroll();
   const { activeIndex } = useActiveSection();
 
   return (
     <main className="relative">
       {/* Fixed 4-Wall Navigation */}
-      <WallNav activeIndex={activeIndex} />
+      <WallNav activeIndex={activeIndex} scrollToSection={scrollToSection} />
       
       {/* Fixed Spline canvas - full viewport */}
       <SplineScene cameraState={cameraState} />

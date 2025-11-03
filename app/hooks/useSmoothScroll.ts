@@ -18,13 +18,13 @@ const CAMERA_STATES: CameraState[] = [
   },
   {
     // Section 3 - State 3
-    position: { x: 90.71, y: 39.62, z: 142.47 },
+    position: { x: 90.71, y: 11.62, z: 142.27 },
     rotation: { x: 22.58, y: 22.3, z: 21.74 },
   },
   {
     // Section 4 - State 4
-    position: { x: -310.63, y: 742.62, z: 1011.71 },
-    rotation: { x: -22.19, y: -14.06, z: -5.66 },
+    position: { x: -175.77, y: 171.81, z: 1039.52 },
+    rotation: { x: 4.24, y: -8.76, z: 0.65 },
   },
 ];
 
@@ -41,8 +41,6 @@ export function useSmoothScroll() {
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 1,
-      smoothTouch: false,
-      touchMultiplier: 2,
       infinite: false,
     });
 
@@ -56,7 +54,7 @@ export function useSmoothScroll() {
     requestAnimationFrame(raf);
 
     // Connect Lenis to window scroll
-    lenis.on("scroll", ({ scroll, limit, velocity, direction }: any) => {
+    lenis.on("scroll", () => {
       // This will be handled by the second useEffect
     });
 
@@ -80,7 +78,7 @@ export function useSmoothScroll() {
 
       const lenis = lenisRef.current;
 
-      const handleScroll = ({ scroll, limit, velocity }: any) => {
+      const handleScroll = ({ scroll }: { scroll: number }) => {
         const sections = document.querySelectorAll("[data-section]");
         if (sections.length === 0) {
           console.warn("No sections found");
@@ -159,23 +157,46 @@ export function useSmoothScroll() {
       // Initial call after a short delay to ensure limit is set
       setTimeout(() => {
         const initialScroll = lenis.scroll;
-        const initialLimit = lenis.limit || document.documentElement.scrollHeight - window.innerHeight;
-        handleScroll({ scroll: initialScroll, limit: initialLimit, velocity: 0 });
+        handleScroll({ scroll: initialScroll });
       }, 100);
 
       // Store cleanup function
-      (lenis as any)._cameraScrollCleanup = () => {
+      (lenis as Lenis & { _cameraScrollCleanup?: () => void })._cameraScrollCleanup = () => {
         lenis.off("scroll", handleScroll);
       };
     }, 100);
 
     return () => {
       clearTimeout(timeoutId);
-      if (lenisRef.current && (lenisRef.current as any)._cameraScrollCleanup) {
-        (lenisRef.current as any)._cameraScrollCleanup();
+      if (lenisRef.current) {
+        const lenisWithCleanup = lenisRef.current as Lenis & { _cameraScrollCleanup?: () => void };
+        if (lenisWithCleanup._cameraScrollCleanup) {
+          lenisWithCleanup._cameraScrollCleanup();
+        }
       }
     };
   }, []);
 
-  return { cameraState };
+  const scrollToSection = (sectionIndex: number) => {
+    if (!lenisRef.current) return;
+    
+    // Get all sections with data-section attribute
+    const sections = document.querySelectorAll('[data-section]');
+    if (sections.length === 0 || sectionIndex < 0 || sectionIndex >= sections.length) return;
+    
+    // Get the target section
+    const targetSection = sections[sectionIndex];
+    const targetId = targetSection.getAttribute('id');
+    
+    if (targetId) {
+      // Use Lenis's scrollTo method for smooth scrolling
+      lenisRef.current.scrollTo(`#${targetId}`, {
+        offset: 0, // No offset, scroll to exact position
+        duration: 2.5, // Slower duration for more elegant transitions
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Same easing as Lenis
+      });
+    }
+  };
+
+  return { cameraState, scrollToSection };
 }
