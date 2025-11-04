@@ -1,13 +1,40 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function ScrollSyncedVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    // Wait for video metadata to load
+    const handleLoadedMetadata = () => {
+      console.log("Video metadata loaded, duration:", video.duration);
+      setIsReady(true);
+    };
+
+    const handleError = (e: Event) => {
+      console.error("Video loading error:", e);
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('error', handleError);
+
+    // Force load
+    video.load();
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('error', handleError);
+    };
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !isReady) return;
 
     const handleScroll = () => {
       const sections = document.querySelectorAll('[data-section]');
@@ -16,7 +43,6 @@ export default function ScrollSyncedVideo() {
       const viewportHeight = window.innerHeight;
       const viewportCenter = window.scrollY + (viewportHeight / 2);
       
-      // Calculate which section the viewport center is in
       let targetTime = 0;
       
       sections.forEach((section, index) => {
@@ -25,30 +51,27 @@ export default function ScrollSyncedVideo() {
         const sectionBottom = sectionTop + rect.height;
         
         if (viewportCenter >= sectionTop && viewportCenter <= sectionBottom) {
-          // Calculate progress within this section (0 to 1)
           const sectionProgress = (viewportCenter - sectionTop) / rect.height;
-          
-          // Each section is 3 seconds in the video
           const sectionStartTime = index * 3;
-          
-          // Interpolate within the 3-second window
           targetTime = sectionStartTime + (sectionProgress * 3);
         }
       });
       
-      // Clamp to video duration
       targetTime = Math.max(0, Math.min(12, targetTime));
-      video.currentTime = targetTime;
+      
+      // Only set currentTime if video is ready
+      if (video.readyState >= 2) {
+        video.currentTime = targetTime;
+      }
     };
 
     // Initial sync
     handleScroll();
     
-    // Listen to scroll
     window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isReady]);
 
   return (
     <video
@@ -57,9 +80,9 @@ export default function ScrollSyncedVideo() {
       playsInline
       preload="auto"
       className="fixed inset-0 z-0 w-full h-full object-cover"
+      style={{ backgroundColor: '#f5f5f5' }}
     >
       <source src="/videos/hollow-princess-vid.mp4" type="video/mp4" />
     </video>
   );
 }
-

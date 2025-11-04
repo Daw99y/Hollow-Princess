@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SplineScene from "./components/SplineScene";
 import ScrollSyncedVideo from "./components/ScrollSyncedVideo";
 import WallNav from "./components/WallNav";
@@ -12,10 +12,15 @@ import { useSmoothScroll } from "./hooks/useSmoothScroll";
 import { useActiveSection } from "./hooks/useActiveSection";
 
 export default function Home() {
-  // Detect mobile device (synchronous, runs immediately)
-  const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const [isMobile, setIsMobile] = useState(false);
   const { cameraState, scrollToSection } = useSmoothScroll();
   const { activeIndex } = useActiveSection();
+
+  // Detect mobile after component mounts (client-side only)
+  useEffect(() => {
+    const checkMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    setIsMobile(checkMobile);
+  }, []);
 
   return (
     <main className="relative">
