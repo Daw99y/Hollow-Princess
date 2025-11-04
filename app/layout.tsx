@@ -67,6 +67,7 @@ export default function RootLayout({
         <CapsuleHeader />
         <ScrollIndicator />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
