@@ -6,15 +6,25 @@ export default function ScrollSyncedVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isReady, setIsReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const desiredTimeRef = useRef(0);
+  const lastBackSeekAtRef = useRef(0);
+  const durationRef = useRef(0);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleLoadedMetadata = () => {
-      console.log("Video metadata loaded, duration:", video.duration);
+    const handleLoadedMetadata = async () => {
+      durationRef.current = Number.isFinite(video.duration) ? video.duration : 12;
+      console.log("Video metadata loaded, duration:", durationRef.current);
       setIsReady(true);
       setIsLoading(false);
+      try {
+        // Warm up decoder; allowed because muted + playsInline
+        await video.play();
+        // Immediately pause; we'll steer via playbackRate
+        video.pause();
+      } catch (_) {}
     };
 
     const handleError = (e: Event) => {
@@ -37,34 +47,51 @@ export default function ScrollSyncedVideo() {
     if (!video || !isReady) return;
 
     let rafId: number | null = null;
-    let targetTime = 0;
 
-    const updateVideoTime = () => {
-      // Only update if difference is significant (reduces seeking)
-      if (video.readyState >= 2 && Math.abs(video.currentTime - targetTime) > 0.03) {
-        video.currentTime = targetTime;
+    const sync = () => {
+      const desired = desiredTimeRef.current;
+      const current = video.currentTime;
+      const delta = desired - current;
+
+      // Close enough: hold exact frame
+      if (Math.abs(delta) < 0.02) {
+        if (!video.paused) video.pause();
+        video.playbackRate = 1;
+      } else if (delta > 0) {
+        // Scroll forward: steer with playbackRate for smoothness
+        const rate = Math.max(0.5, Math.min(4, 0.5 + delta * 3));
+        video.playbackRate = rate;
+        if (video.paused) {
+          void video.play().catch(() => {});
+        }
+      } else {
+        // Going backwards: throttle seeks to avoid heavy decode
+        const now = performance.now();
+        if (!video.paused) video.pause();
+        video.playbackRate = 1;
+        if (now - lastBackSeekAtRef.current >= 50) {
+          video.currentTime = desired;
+          lastBackSeekAtRef.current = now;
+        }
       }
-      rafId = null;
+
+      rafId = requestAnimationFrame(sync);
     };
+
+    rafId = requestAnimationFrame(sync);
 
     const handleScroll = () => {
-      // Calculate scroll progress (0 to 1) based on entire document
       const scrollTop = window.scrollY;
-      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollProgress = Math.min(1, Math.max(0, scrollTop / documentHeight));
-      
-      // Map scroll progress to video time (0 to 12 seconds)
-      targetTime = scrollProgress * 12;
-      
-      // Use RAF to throttle video.currentTime updates (smoother playback)
-      if (rafId === null) {
-        rafId = requestAnimationFrame(updateVideoTime);
-      }
+      const docHeight = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, scrollTop / docHeight));
+      const duration = durationRef.current > 0 ? durationRef.current : (Number.isFinite(video.duration) ? video.duration : 12);
+      desiredTimeRef.current = progress * duration;
     };
 
+    // Initialize once
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (rafId !== null) cancelAnimationFrame(rafId);
