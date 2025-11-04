@@ -5,25 +5,25 @@ import { useEffect, useRef, useState } from "react";
 export default function ScrollSyncedVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Wait for video metadata to load
     const handleLoadedMetadata = () => {
       console.log("Video metadata loaded, duration:", video.duration);
       setIsReady(true);
+      setIsLoading(false);
     };
 
     const handleError = (e: Event) => {
       console.error("Video loading error:", e);
+      setIsLoading(false);
     };
 
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
     video.addEventListener('error', handleError);
-
-    // Force load
     video.load();
 
     return () => {
@@ -36,53 +36,60 @@ export default function ScrollSyncedVideo() {
     const video = videoRef.current;
     if (!video || !isReady) return;
 
-    const handleScroll = () => {
-      const sections = document.querySelectorAll('[data-section]');
-      if (sections.length === 0) return;
+    let rafId: number | null = null;
+    let targetTime = 0;
 
-      const viewportHeight = window.innerHeight;
-      const viewportCenter = window.scrollY + (viewportHeight / 2);
-      
-      let targetTime = 0;
-      
-      sections.forEach((section, index) => {
-        const rect = section.getBoundingClientRect();
-        const sectionTop = window.scrollY + rect.top;
-        const sectionBottom = sectionTop + rect.height;
-        
-        if (viewportCenter >= sectionTop && viewportCenter <= sectionBottom) {
-          const sectionProgress = (viewportCenter - sectionTop) / rect.height;
-          const sectionStartTime = index * 3;
-          targetTime = sectionStartTime + (sectionProgress * 3);
-        }
-      });
-      
-      targetTime = Math.max(0, Math.min(12, targetTime));
-      
-      // Only set currentTime if video is ready
-      if (video.readyState >= 2) {
+    const updateVideoTime = () => {
+      // Only update if difference is significant (reduces seeking)
+      if (video.readyState >= 2 && Math.abs(video.currentTime - targetTime) > 0.1) {
         video.currentTime = targetTime;
+      }
+      rafId = null;
+    };
+
+    const handleScroll = () => {
+      // Calculate scroll progress (0 to 1) based on entire document
+      const scrollTop = window.scrollY;
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = Math.min(1, Math.max(0, scrollTop / documentHeight));
+      
+      // Map scroll progress to video time (0 to 12 seconds)
+      targetTime = scrollProgress * 12;
+      
+      // Use RAF to throttle video.currentTime updates (smoother playback)
+      if (rafId === null) {
+        rafId = requestAnimationFrame(updateVideoTime);
       }
     };
 
-    // Initial sync
     handleScroll();
-    
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, [isReady]);
 
   return (
-    <video
-      ref={videoRef}
-      muted
-      playsInline
-      preload="auto"
-      className="fixed inset-0 z-0 w-full h-full object-cover"
-      style={{ backgroundColor: '#f5f5f5' }}
-    >
-      <source src="/videos/hollow-princess-vid.mp4" type="video/mp4" />
-    </video>
+    <div className="fixed inset-0 z-0">
+      {isLoading && (
+        <div className="absolute inset-0 bg-white flex items-center justify-center z-10">
+          <div className="text-neutral-400 font-geist-sans text-sm tracking-widest">
+            Loading...
+          </div>
+        </div>
+      )}
+      <video
+        ref={videoRef}
+        muted
+        playsInline
+        preload="auto"
+        className="w-full h-full object-cover"
+        style={{ backgroundColor: '#ffffff' }}
+      >
+        <source src="/videos/hollow-princess-vid.mp4" type="video/mp4" />
+      </video>
+    </div>
   );
 }
