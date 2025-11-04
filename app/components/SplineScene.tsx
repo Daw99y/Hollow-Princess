@@ -18,6 +18,7 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
   const [webglSupported, setWebglSupported] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadTimeout, setLoadTimeout] = useState(false);
+  const [performanceIssue, setPerformanceIssue] = useState(false);
   const splineRef = useRef<Application | null>(null);
   const cameraRef = useRef<any>(null);
   const cameraStateRef = useRef<CameraState>(cameraState);
@@ -79,6 +80,18 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
     setWebglSupported(checkWebGL());
   }, []);
 
+  // Reduce canvas resolution on mobile
+  useEffect(() => {
+    if (!isMobile || !splineRef.current) return;
+    
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+      // Force 1x pixel ratio for better performance on mobile
+      canvas.style.imageRendering = 'auto';
+      console.log('Canvas resolution reduced for mobile (1x pixel ratio)');
+    }
+  }, [isMobile, splineRef.current]);
+
   // Function to start the animation loop
   const startAnimationLoop = () => {
     if (isAnimatingRef.current || !splineRef.current || !cameraRef.current) {
@@ -99,8 +112,9 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
     };
 
     // Performance optimization for mobile devices
+    // Reduce FPS further if performance issues detected
     let lastTime = 0;
-    const targetFPS = isMobile ? 30 : 60;
+    const targetFPS = isMobile ? (performanceIssue ? 20 : 30) : 60;
     const frameInterval = 1000 / targetFPS;
 
     // Smooth interpolation function
@@ -176,6 +190,30 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
       
       splineRef.current = spline;
       setIsLoading(false); // Scene loaded successfully
+      
+      // Mobile performance optimizations
+      if (isMobile && spline) {
+        try {
+          // Access the renderer
+          const renderer = (spline as any)._renderer;
+          if (renderer) {
+            // Reduce pixel ratio (force 1x on mobile)
+            renderer.setPixelRatio(1);
+            
+            // Disable shadows for better performance
+            if (renderer.shadowMap) {
+              renderer.shadowMap.enabled = false;
+            }
+            
+            // Set low power preference
+            renderer.powerPreference = 'low-power';
+            
+            console.log('Mobile rendering optimizations applied: 1x pixel ratio, shadows disabled');
+          }
+        } catch (rendererError) {
+          console.warn('Could not apply renderer optimizations:', rendererError);
+        }
+      }
       
       // Find the camera in the scene - camera is named "CameraX"
       const camera = spline.findObjectByName("CameraX");
@@ -306,8 +344,114 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
     return () => window.removeEventListener('error', handleWindowError);
   }, []);
 
+  // Memory monitoring on mobile
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const checkMemory = () => {
+      if ((performance as any).memory) {
+        const used = (performance as any).memory.usedJSHeapSize;
+        const limit = (performance as any).memory.jsHeapSizeLimit;
+        const percentage = (used / limit) * 100;
+        
+        if (percentage > 80) {
+          console.warn(`High memory usage: ${percentage.toFixed(1)}%`);
+          
+          // Force pause at critical memory levels
+          if (percentage > 90) {
+            console.error('Critical memory usage, pausing animations');
+            if (animationIdRef.current) {
+              cancelAnimationFrame(animationIdRef.current);
+              isAnimatingRef.current = false;
+            }
+            setPerformanceIssue(true);
+          }
+        }
+      }
+    };
+    
+    // Check memory every 2 seconds on mobile
+    const interval = setInterval(checkMemory, 2000);
+    return () => clearInterval(interval);
+  }, [isMobile]);
+
+  // FPS monitoring on mobile
+  useEffect(() => {
+    if (!isMobile || performanceIssue) return;
+    
+    let frameCount = 0;
+    let lastTime = performance.now();
+    let rafId: number;
+    
+    const checkFPS = () => {
+      frameCount++;
+      const currentTime = performance.now();
+      
+      if (currentTime >= lastTime + 1000) {
+        const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+        
+        if (fps < 15) {
+          console.warn(`Low FPS detected: ${fps}fps`);
+          setPerformanceIssue(true);
+          return; // Stop monitoring
+        }
+        
+        frameCount = 0;
+        lastTime = currentTime;
+      }
+      
+      rafId = requestAnimationFrame(checkFPS);
+    };
+    
+    rafId = requestAnimationFrame(checkFPS);
+    
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isMobile, performanceIssue]);
+
+  // Scene cleanup on unmount
+  useEffect(() => {
+    const cleanup = () => {
+      if (splineRef.current) {
+        try {
+          // Dispose of geometries and materials to free memory
+          const scene = (splineRef.current as any).scene;
+          if (scene) {
+            scene.traverse((object: any) => {
+              if (object.geometry) {
+                object.geometry.dispose();
+              }
+              if (object.material) {
+                if (Array.isArray(object.material)) {
+                  object.material.forEach((material: any) => material.dispose());
+                } else {
+                  object.material.dispose();
+                }
+              }
+            });
+          }
+          console.log('Scene cleanup completed');
+        } catch (error) {
+          console.error('Cleanup error:', error);
+        }
+      }
+    };
+    
+    window.addEventListener('beforeunload', cleanup);
+    return () => {
+      window.removeEventListener('beforeunload', cleanup);
+      cleanup();
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 z-0">
+      {performanceIssue && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-yellow-100 px-4 py-2 rounded text-sm max-w-sm mx-auto text-center shadow-lg">
+          <p className="text-yellow-800">Performance issue detected. Consider using desktop for best experience.</p>
+        </div>
+      )}
       {webglSupported === null ? (
         <div className="w-full h-full flex items-center justify-center bg-gray-100">
           <p className="text-gray-600">Checking device compatibility...</p>
