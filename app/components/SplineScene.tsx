@@ -161,7 +161,7 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
   return (
     <div className="fixed inset-0 z-0">
       <Spline
-        scene="https://prod.spline.design/0OcmU8W25rvMzPDk/scene.splinecode"
+        scene="https://prod.spline.design/jL28RVVYWYZQ48eo/scene.splinecode"
         onLoad={onLoad}
         className="w-full h-full"
       />
