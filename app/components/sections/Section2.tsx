@@ -1,5 +1,3 @@
-import FocusBlurItem from "../FocusBlurItem";
-
 export default function Section2() {
   const shows = [
     { date: "2026.03.12", location: "Seoul, KR" },
@@ -19,21 +17,14 @@ export default function Section2() {
       data-section="2"
       className="relative z-10 h-screen w-full flex items-center"
     >
-      {/* mobile soft-light diffusion overlay */}
-      <div className="md:hidden absolute inset-0 z-10 pointer-events-none backdrop-blur bg-linear-to-b from-white/0 via-white/20 to-white/0 mask-[linear-gradient(to_bottom,transparent,#000_12%,#000_88%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,#000_12%,#000_88%,transparent)]" />
       <div className="w-full px-8 md:px-24 lg:px-32 py-10">
         <div className="relative z-20 w-full space-y-14 md:space-y-20">
-          <FocusBlurItem className="will-change-[filter,opacity]">
-            <div className="text-sm uppercase tracking-widest text-neutral-600/50 select-none filter blur-(--blur) transition-[filter,opacity] duration-150">
-              KR
-            </div>
-          </FocusBlurItem>
+          <div className="text-sm uppercase tracking-widest text-neutral-600/50 select-none">
+            KR
+          </div>
           {krShows.map((s) => (
-            <FocusBlurItem
-              key={`${s.date}-${s.location}`}
-              className="will-change-[filter,opacity]"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 items-baseline filter blur-(--blur) transition-[filter,opacity] duration-150">
+            <div key={`${s.date}-${s.location}`}>
+              <div className="grid grid-cols-1 md:grid-cols-2 items-baseline">
                 <div className="justify-self-start text-left font-geist-sans text-neutral-600/85 tracking-widest uppercase text-sm md:text-base">
                   {s.date}
                 </div>
@@ -47,19 +38,14 @@ export default function Section2() {
                   </div>
                 </div>
               </div>
-            </FocusBlurItem>
-          ))}
-          <FocusBlurItem className="will-change-[filter,opacity]">
-            <div className="text-sm uppercase tracking-widest text-neutral-600/50 select-none filter blur-(--blur) transition-[filter,opacity] duration-150">
-              JP
             </div>
-          </FocusBlurItem>
+          ))}
+          <div className="text-sm uppercase tracking-widest text-neutral-600/50 select-none">
+            JP
+          </div>
           {jpShows.map((s) => (
-            <FocusBlurItem
-              key={`${s.date}-${s.location}`}
-              className="will-change-[filter,opacity]"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 items-baseline filter blur-(--blur) transition-[filter,opacity] duration-150">
+            <div key={`${s.date}-${s.location}`}>
+              <div className="grid grid-cols-1 md:grid-cols-2 items-baseline">
                 <div className="justify-self-start text-left font-geist-sans text-neutral-600/85 tracking-widest uppercase text-sm md:text-base">
                   {s.date}
                 </div>
@@ -71,7 +57,7 @@ export default function Section2() {
                   </div>
                 </div>
               </div>
-            </FocusBlurItem>
+            </div>
           ))}
         </div>
       </div>
