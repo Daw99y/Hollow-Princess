@@ -9,7 +9,7 @@ type MobileScrollVideoProps = {
 	src?: string;
 };
 
-const DEFAULT_SRC = "/videos/hollow-princess-video.webm";
+const DEFAULT_SRC = "/videos/hollow-princess-scrub.mp4";
 
 /**
  * Mobile-only, userAgent-gated, scroll-scrubbed video with eased rAF scrubbing.
@@ -120,6 +120,7 @@ export default function MobileScrollVideo({ src = DEFAULT_SRC }: MobileScrollVid
 		const link = document.createElement("link");
 		link.rel = "preload";
 		link.as = "video";
+		link.type = "video/mp4";
 		link.href = src;
 		document.head.appendChild(link);
 		preloadLinkRef.current = link;
@@ -135,12 +136,17 @@ export default function MobileScrollVideo({ src = DEFAULT_SRC }: MobileScrollVid
 			video.pause();
 		};
 
-		video.addEventListener("loadedmetadata", handleLoadedMetadata, { passive: true } as any);
-		video.addEventListener("canplay", handleCanPlay, { passive: true } as any);
+		video.addEventListener("loadedmetadata", handleLoadedMetadata);
+		video.addEventListener("canplay", handleCanPlay);
 
 		// Initialize target based on current scroll
 		const initProgress = computeScrollProgress();
 		targetTimeRef.current = (durationRef.current || 0) * initProgress;
+
+		// Ensure iOS loads metadata for the assigned source without autoplaying
+		try {
+			video.load();
+		} catch {}
 
 		// Passive scroll listener: update target time (work happens in rAF loop)
 		const onScroll = () => {
@@ -171,7 +177,7 @@ export default function MobileScrollVideo({ src = DEFAULT_SRC }: MobileScrollVid
 			<video
 				ref={videoRef}
 				src={src}
-				preload="auto"
+				preload="metadata"
 				muted
 				playsInline
 				controls={false}

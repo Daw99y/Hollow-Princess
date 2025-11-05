@@ -4,7 +4,7 @@ export default function Page() {
 	return (
 		<main className="min-h-screen w-full bg-white text-neutral-600">
 			{/* Hero mobile-only scroll video (UA-gated inside component) */}
-			<MobileScrollVideo />
+			<MobileScrollVideo src="/videos/hollow-princess-scrub.mp4" />
 
 			{/* Extra content to enable scrolling and verify scrubbing across the page */}
 			<section className="mx-auto max-w-3xl px-6 py-16">
