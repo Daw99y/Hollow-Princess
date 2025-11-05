@@ -137,6 +137,11 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
     if (splineRef.current && cameraRef.current && !isAnimatingRef.current) {
       startAnimationLoop();
     }
+
+    // Signal Spline readiness to the app shell
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("spline:ready"));
+    }
   };
 
   // Watch for camera availability and start loop when ready
