@@ -7,7 +7,6 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import CapsuleHeader from "./components/CapsuleHeader";
-import ScrollIndicator from "./components/ScrollIndicator";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
@@ -65,7 +64,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${unifrakturMaguntia.variable} ${spectral.variable} antialiased`}
       >
         <CapsuleHeader />
-        <ScrollIndicator />
         {children}
         <SpeedInsights />
       </body>
