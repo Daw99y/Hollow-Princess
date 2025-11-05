@@ -25,13 +25,12 @@ export function useDeviceType(breakpointPx: number = 768): boolean {
       return () => media.removeEventListener("change", update);
     }
 
-    // Fallback for older browsers
-    // @ts-expect-error addListener exists in some environments
-    media.addListener?.(update);
-    return () => {
-      // @ts-expect-error removeListener exists in some environments
-      media.removeListener?.(update);
-    };
+    // Fallback for older browsers (deprecated API)
+    if (typeof (media as any).addListener === "function") {
+      (media as any).addListener(update);
+      return () => (media as any).removeListener?.(update);
+    }
+    return;
   }, [breakpointPx]);
 
   return isMobile;
