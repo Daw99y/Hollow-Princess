@@ -1,0 +1,189 @@
+{
+  "meta": {
+    "project": "Hollow Princess - California Mountain Snake [SS26]",
+    "date": "2025-11-04",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "Hollow Princess is an immersive narrative web experience blending medical aesthetics with high-fashion storytelling through a minimalist, cinematic single-page site featuring a central 3D Spline object and wall-style navigation.",
+  "core_goals": [
+    "Communicate a sterile, precise, emotionally restrained luxury aesthetic.",
+    "Deliver a smooth, cinematic experience optimized for desktop and mobile.",
+    "Showcase a central 3D Spline model with synchronized camera and scroll-driven motion.",
+    "Implement intuitive, accessible wall navigation and active section tracking.",
+    "Maintain high performance and subtle motion with strict adherence to animation guidelines."
+  ],
+  "key_features": [
+    "Next.js App Router based single-page application with four curated content sections.",
+    "Global styling via Tailwind CSS v4 implementing a surgical minimalism visual style.",
+    "Fixed frosted glass header with brand typography and subtle interaction states.",
+    "Loading screen that fades after 3D assets and first section are ready.",
+    "Central 3D Spline scene with camera transitions managed smoothly on user scroll and section changes.",
+    "Wall navigation component highlighting the active section and supporting keyboard accessibility.",
+    "Subtle vignette overlay for focus tuning, toggleable for performance testing.",
+    "Scroll indicator prompting user engagement and fading after initial scroll.",
+    "Modular content sections with cinematic scroll-driven animations and responsive mobile variants.",
+    "Smooth scrolling using Lenis with centralized scroll handling to avoid conflicts.",
+    "Hooks for active section tracking, device type detection, and reduced motion preferences.",
+    "Strict layout and alignment for Section 2 dates and locations to avoid overlapping the 3D scene."
+  ],
+  "user_flow_summary": [
+    "User lands on the site and sees the loading screen while assets including the 3D Spline scene load.",
+    "Post loading, the vignette overlay appears focusing the viewport center with the fixed frosted header visible.",
+    "User scrolls or navigates via the fixed wall navigation to move between four main sections, each animating in with subtle fades and transforms.",
+    "As the user scrolls, the 3D Spline camera transitions smoothly, synchronized to the current section.",
+    "Wall navigation updates highlight the active section and supports keyboard navigation and screen readers.",
+    "Scroll indicator initially pulses near the viewport fold and fades after user engagement.",
+    "On mobile devices, simplified layouts and reduced motion options ensure a consistent experience.",
+    "Accessibility features such as keyboard focus, sufficient contrast, and respect for reduced motion preferences are maintained throughout."
+  ],
+  "validation_criteria": [
+    "Header is fixed with correct frosted glass effect, soft typography, and precise z-index layering.",
+    "3D Spline central object renders correctly with smooth camera transitions tied to scroll and active section.",
+    "Wall navigation highlights the current section and scrolls smoothly to anchors supporting keyboard focus.",
+    "Scroll indicator pulses initially and fades after first scroll interaction as per animation timing guidelines.",
+    "Section 2 enforces left alignment of dates and right alignment of locations to prevent overlap with the central 3D model.",
+    "Smooth scrolling integrates Lenis properly without double scroll handlers or jank, preserving keyboard navigation functionality.",
+    "Animations comply with prescribed durations (UI fades ≤1.2s, scroll transitions ≤2s) and easing functions.",
+    "Performance meets targets: First Contentful Paint ≤ 2.5s and Time to Interactive ≤4s on mid-tier devices.",
+    "Accessibility checks affirm no major WCAG 2.1 AA blockers, including keyboard navigability, color contrast, and reduced motion adherence.",
+    "Fallbacks activate on errors or low-power devices, such as static hero image and disabled advanced motion.",
+    "All key components function as expected across target devices and screen sizes with no layout shifts or content overlap."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript",
+      "React 19",
+      "Next.js (App Router)",
+      "Tailwind CSS v4",
+      "Framer Motion",
+      "Lenis",
+      "Spline (React Runtime)",
+      "ESLint 9",
+      "Vercel Speed Insights",
+      "GSAP"
+    ],
+    "features": [
+      {
+        "name": "Application layout and global styles",
+        "description": "App shell, metadata, and global Tailwind setup for the entire site.",
+        "files": [
+          "app/layout.tsx",
+          "app/globals.css"
+        ]
+      },
+      {
+        "name": "Home page composition",
+        "description": "Entry page composing header, 3D scene, navigation wall, and content sections.",
+        "files": [
+          "app/page.tsx"
+        ]
+      },
+      {
+        "name": "Capsule header",
+        "description": "Frosted-glass header with brand typography and cinematic entrance using Framer Motion.",
+        "files": [
+          "app/components/CapsuleHeader.tsx"
+        ]
+      },
+      {
+        "name": "Loading screen",
+        "description": "Initial loading overlay for assets and 3D scene readiness.",
+        "files": [
+          "app/components/LoadingScreen.tsx"
+        ]
+      },
+      {
+        "name": "Location button",
+        "description": "Minimal location selector/button component consistent with brand aesthetic.",
+        "files": [
+          "app/components/LocationButton.tsx"
+        ]
+      },
+      {
+        "name": "Vignette overlay",
+        "description": "Subtle vignette effect overlay to focus the scene center.",
+        "files": [
+          "app/components/VignetteOverlay.tsx"
+        ]
+      },
+      {
+        "name": "Wall navigation",
+        "description": "Fixed wall-based navigation with active section tracking.",
+        "files": [
+          "app/components/WallNav.tsx"
+        ]
+      },
+      {
+        "name": "3D Spline scene (server wrapper)",
+        "description": "Server-side wrapper for Spline 3D scene integration.",
+        "files": [
+          "app/components/SplineScene.tsx"
+        ]
+      },
+      {
+        "name": "3D Spline scene (client runtime)",
+        "description": "Client component integrating @splinetool/react-spline with camera management.",
+        "files": [
+          "app/components/SplineSceneClient.tsx",
+          "app/types/camera.ts"
+        ]
+      },
+      {
+        "name": "Content sections",
+        "description": "Cinematic sections with scroll-driven motion; desktop-first with simplified mobile handling.",
+        "files": [
+          "app/components/sections/Section1.tsx",
+          "app/components/sections/Section2.tsx",
+          "app/components/sections/Section3.tsx",
+          "app/components/sections/Section4.tsx",
+          "app/components/sections/Card.tsx"
+        ]
+      },
+      {
+        "name": "Active section tracking",
+        "description": "Hook to track the currently active section for navigation and state.",
+        "files": [
+          "app/hooks/useActiveSection.ts"
+        ]
+      },
+      {
+        "name": "Smooth scrolling (Lenis)",
+        "description": "Hook to initialize Lenis for GPU-friendly smooth scrolling.",
+        "files": [
+          "app/hooks/useSmoothScroll.ts"
+        ]
+      },
+      {
+        "name": "Device type detection",
+        "description": "Hook for responsive logic based on device type.",
+        "files": [
+          "app/hooks/useDeviceType.ts"
+        ]
+      },
+      {
+        "name": "Public assets",
+        "description": "Images and videos used in sections and cinematic visuals.",
+        "files": [
+          "public/images/t-p-t-01.png",
+          "public/images/t-p-t-02.png",
+          "public/images/top-pants-v05.png",
+          "public/mobile-scroll-video.mp4",
+          "public/file.svg",
+          "public/globe.svg",
+          "public/window.svg"
+        ]
+      },
+      {
+        "name": "Project configuration",
+        "description": "Next.js, ESLint, Tailwind, and TypeScript configuration files.",
+        "files": [
+          "package.json",
+          "tsconfig.json",
+          "next.config.ts",
+          "postcss.config.mjs",
+          "eslint.config.mjs"
+        ]
+      }
+    ]
+  }
+}

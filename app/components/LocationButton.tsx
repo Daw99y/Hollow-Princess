@@ -22,7 +22,7 @@ export default function LocationButton({
 
   return (
     <div
-      className={`bg-white opacity-95 border border-neutral-200 rounded-2xl px-6 py-4 md:px-8 md:py-6 max-w-3xl ${containerAlignClass}`}
+      className={`bg-white opacity-95 border border-neutral-200 rounded-2xl px-6 py-3 md:px-8 md:py-4 max-w-3xl ${containerAlignClass}`}
     >
       <div className={mainLabelClass}>{label}</div>
       {subLabel && (

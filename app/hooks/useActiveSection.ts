@@ -11,19 +11,34 @@ export function useActiveSection() {
     observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Get the section number from data-section attribute
-            const sectionNumber = entry.target.getAttribute("data-section");
-            if (sectionNumber) {
-              // Map section numbers to navigation indices
-              // Section 1 (data-section="1") → Index 0 (Home)
-              // Section 2 (data-section="2") → Index 1 (Lore)
-              // Section 3 (data-section="3") → Index 2 (Vault)
-              // Section 4 (data-section="4") → Index 3 (Store)
-              const sectionIndex = parseInt(sectionNumber) - 1;
-              setActiveIndex(sectionIndex);
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const navGroupAttr = entry.target.getAttribute("data-nav-group");
+          if (navGroupAttr) {
+            const parsedNavIndex = parseInt(navGroupAttr, 10);
+            if (!Number.isNaN(parsedNavIndex)) {
+              setActiveIndex(parsedNavIndex);
+              return;
             }
           }
+
+          const sectionNumber = entry.target.getAttribute("data-section");
+          if (!sectionNumber) {
+            return;
+          }
+
+          const numericSection = parseInt(sectionNumber, 10);
+          if (Number.isNaN(numericSection)) {
+            return;
+          }
+
+          const navIndex = Math.max(
+            0,
+            Math.floor((numericSection - 1) / 2)
+          );
+          setActiveIndex(navIndex);
         });
       },
       {

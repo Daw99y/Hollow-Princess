@@ -4,29 +4,86 @@ import { useEffect, useState, useRef } from "react";
 import Lenis from "lenis";
 import { CameraState } from "../types/camera";
 
-// Camera positions for each section
+// Camera positions for each spline segment boundary
 const CAMERA_STATES: CameraState[] = [
   {
-    // Section 1 - Base State
+    // Segment 1 start
     position: { x: 80.16, y: 597.14, z: 0.72 },
     rotation: { x: -21.75, y: 26.92, z: 13.89 },
   },
   {
-    // Section 2 - State 2
-    position: { x: -224.85, y: 488.24, z: -61.60 },
+    // Segment 1 end / Segment 2 start
+    position: { x: -224.85, y: 488.24, z: -61.6 },
     rotation: { x: -36.43, y: -67.54, z: -34.3 },
   },
   {
-    // Section 3 - State 3
+    // Segment 2 end / Segment 3 start
     position: { x: 99.23, y: 15.67, z: 140.16 },
     rotation: { x: 22.58, y: 22.3, z: 21.74 },
   },
   {
-    // Section 4 - State 4
+    // Segment 3 end / Segment 4 start
     position: { x: -175.77, y: 171.81, z: 1039.52 },
     rotation: { x: 4.24, y: -8.76, z: 0.65 },
   },
 ];
+
+type CameraSegment = {
+  start: CameraState;
+  end: CameraState;
+};
+
+const CAMERA_SEGMENTS: CameraSegment[] = CAMERA_STATES.map((state, index) => {
+  const nextState = CAMERA_STATES[index + 1] ?? state;
+  return { start: state, end: nextState };
+});
+
+type TimelineBand =
+  | {
+      type: "spline";
+      segmentIndex: number;
+      duration: number;
+    }
+  | {
+      type: "content";
+      duration: number;
+    };
+
+const TIMELINE_BANDS: TimelineBand[] = [
+  { type: "spline", segmentIndex: 0, duration: 0.25 },
+  { type: "content", duration: 0.1 },
+  { type: "spline", segmentIndex: 1, duration: 0.25 },
+  { type: "content", duration: 0.1 },
+  { type: "spline", segmentIndex: 2, duration: 0.25 },
+  { type: "content", duration: 0.1 },
+];
+
+const TIMELINE_TOTAL_LENGTH = TIMELINE_BANDS.reduce(
+  (acc, band) => acc + band.duration,
+  0
+);
+
+type SplineRange = {
+  segmentIndex: number;
+  start: number;
+  end: number;
+};
+
+const SPLINE_RANGES: SplineRange[] = [];
+
+(() => {
+  let cursor = 0;
+  TIMELINE_BANDS.forEach((band) => {
+    if (band.type === "spline") {
+      SPLINE_RANGES.push({
+        segmentIndex: band.segmentIndex,
+        start: cursor,
+        end: cursor + band.duration,
+      });
+    }
+    cursor += band.duration;
+  });
+})();
 
 export function useSmoothScroll() {
   const [cameraState, setCameraState] = useState<CameraState>(CAMERA_STATES[0]);
@@ -79,77 +136,95 @@ export function useSmoothScroll() {
       const lenis = lenisRef.current;
 
       const handleScroll = ({ scroll }: { scroll: number }) => {
-        const sections = document.querySelectorAll("[data-section]");
-        if (sections.length === 0) {
-          console.warn("No sections found");
-          return;
-        }
+        const limit =
+          lenis.limit ??
+          Math.max(
+            document.documentElement.scrollHeight - window.innerHeight,
+            1
+          );
+        const normalizedScroll = Math.min(Math.max(scroll / limit, 0), 1);
+        const timelinePosition =
+          normalizedScroll * TIMELINE_TOTAL_LENGTH;
 
-        const viewportHeight = window.innerHeight;
-        const viewportCenter = viewportHeight * 0.5;
+        let activeRange: SplineRange | null = null;
+        let previousRange: SplineRange | null = null;
 
-        // Get actual DOM positions for each section's center point
-        const sectionCenters: number[] = [];
-        sections.forEach((section, index) => {
-          const rect = section.getBoundingClientRect();
-          const sectionTop = scroll + rect.top;
-          const sectionHeight = rect.height;
-          const sectionCenter = sectionTop + (sectionHeight / 2);
-          sectionCenters[index] = sectionCenter;
-        });
+        for (const range of SPLINE_RANGES) {
+          if (timelinePosition >= range.start && timelinePosition <= range.end) {
+            activeRange = range;
+            break;
+          }
 
-        // Find which two section centers we're between based on viewport center
-        const viewportCenterScroll = scroll + viewportCenter;
-        
-        let currentSectionIndex = 0;
-        let nextSectionIndex = 0;
-        let interpolationFactor = 0;
+          if (timelinePosition > range.end) {
+            previousRange = range;
+            continue;
+          }
 
-        // If viewport center is before first section center
-        if (viewportCenterScroll < sectionCenters[0]) {
-          currentSectionIndex = 0;
-          nextSectionIndex = 0;
-          interpolationFactor = 0;
-        }
-        // If viewport center is after last section center
-        else if (viewportCenterScroll >= sectionCenters[sectionCenters.length - 1]) {
-          currentSectionIndex = sectionCenters.length - 1;
-          nextSectionIndex = sectionCenters.length - 1;
-          interpolationFactor = 1;
-        }
-        // Find which section centers we're between
-        else {
-          for (let i = 0; i < sectionCenters.length - 1; i++) {
-            if (viewportCenterScroll >= sectionCenters[i] && viewportCenterScroll < sectionCenters[i + 1]) {
-              currentSectionIndex = i;
-              nextSectionIndex = i + 1;
-              // Calculate interpolation: 0 at current center, 1 at next center
-              const distanceBetweenCenters = sectionCenters[i + 1] - sectionCenters[i];
-              const distanceFromCurrent = viewportCenterScroll - sectionCenters[i];
-              interpolationFactor = Math.max(0, Math.min(1, distanceFromCurrent / distanceBetweenCenters));
-              break;
-            }
+          if (timelinePosition < range.start) {
+            break;
           }
         }
 
-        // Interpolate between the two camera states
-        const current = CAMERA_STATES[currentSectionIndex];
-        const next = CAMERA_STATES[nextSectionIndex];
-
-        const interpolatedState: CameraState = {
-          position: {
-            x: current.position.x + (next.position.x - current.position.x) * interpolationFactor,
-            y: current.position.y + (next.position.y - current.position.y) * interpolationFactor,
-            z: current.position.z + (next.position.z - current.position.z) * interpolationFactor,
-          },
-          rotation: {
-            x: current.rotation.x + (next.rotation.x - current.rotation.x) * interpolationFactor,
-            y: current.rotation.y + (next.rotation.y - current.rotation.y) * interpolationFactor,
-            z: current.rotation.z + (next.rotation.z - current.rotation.z) * interpolationFactor,
-          },
+        const interpolateSegment = (
+          segmentIndex: number,
+          progress: number
+        ): CameraState => {
+          const clampedIndex = Math.min(
+            Math.max(segmentIndex, 0),
+            CAMERA_SEGMENTS.length - 1
+          );
+          const segment = CAMERA_SEGMENTS[clampedIndex];
+          const clampedProgress = Math.min(Math.max(progress, 0), 1);
+          return {
+            position: {
+              x:
+                segment.start.position.x +
+                (segment.end.position.x - segment.start.position.x) *
+                  clampedProgress,
+              y:
+                segment.start.position.y +
+                (segment.end.position.y - segment.start.position.y) *
+                  clampedProgress,
+              z:
+                segment.start.position.z +
+                (segment.end.position.z - segment.start.position.z) *
+                  clampedProgress,
+            },
+            rotation: {
+              x:
+                segment.start.rotation.x +
+                (segment.end.rotation.x - segment.start.rotation.x) *
+                  clampedProgress,
+              y:
+                segment.start.rotation.y +
+                (segment.end.rotation.y - segment.start.rotation.y) *
+                  clampedProgress,
+              z:
+                segment.start.rotation.z +
+                (segment.end.rotation.z - segment.start.rotation.z) *
+                  clampedProgress,
+            },
+          };
         };
 
-        setCameraState(interpolatedState);
+        if (activeRange) {
+          const segmentProgress =
+            (timelinePosition - activeRange.start) /
+            (activeRange.end - activeRange.start || 1);
+          const interpolatedState = interpolateSegment(
+            activeRange.segmentIndex,
+            segmentProgress
+          );
+          setCameraState(interpolatedState);
+          return;
+        }
+
+        if (!previousRange) {
+          setCameraState(interpolateSegment(0, 0));
+          return;
+        }
+
+        setCameraState(interpolateSegment(previousRange.segmentIndex, 1));
       };
 
       lenis.on("scroll", handleScroll);
@@ -173,29 +248,40 @@ export function useSmoothScroll() {
         if (lenisWithCleanup._cameraScrollCleanup) {
           lenisWithCleanup._cameraScrollCleanup();
         }
-      }
+        }
     };
   }, []);
 
-  const scrollToSection = (sectionIndex: number) => {
+  const scrollToSection = (
+    sectionIndex: number,
+    options?: { targetType?: "spline" | "content"; center?: boolean }
+  ) => {
     if (!lenisRef.current) return;
-    
-    // Get all sections with data-section attribute
-    const sections = document.querySelectorAll('[data-section]');
-    if (sections.length === 0 || sectionIndex < 0 || sectionIndex >= sections.length) return;
-    
-    // Get the target section
-    const targetSection = sections[sectionIndex];
-    const targetId = targetSection.getAttribute('id');
-    
-    if (targetId) {
-      // Use Lenis's scrollTo method for smooth scrolling
-      lenisRef.current.scrollTo(`#${targetId}`, {
-        offset: 0, // No offset, scroll to exact position
-        duration: 2.5, // Slower duration for more elegant transitions
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Same easing as Lenis
-      });
+
+    const targetType = options?.targetType ?? "spline";
+    const selector =
+      `[data-nav-group="${sectionIndex}"][data-segment-type="${targetType}"]`;
+    const target = document.querySelector<HTMLElement>(selector);
+
+    if (!target) {
+      return;
     }
+
+    const center = options?.center ?? false;
+    let offset = 0;
+
+    if (center) {
+      const rect = target.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const sectionHeight = rect.height;
+      offset = -(viewportHeight / 2) + sectionHeight / 2;
+    }
+
+    lenisRef.current.scrollTo(target, {
+      offset,
+      duration: 2.5,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
   };
 
   return { cameraState, scrollToSection };

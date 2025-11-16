@@ -1,16 +1,62 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import SplineSceneClient from "./components/SplineSceneClient";
-import WallNav from "./components/WallNav";
-import Section1 from "./components/sections/Section1";
-import Section2 from "./components/sections/Section2";
-import Section3 from "./components/sections/Section3";
-import Section4 from "./components/sections/Section4";
 import VignetteOverlay from "./components/VignetteOverlay";
 import LoadingScreen from "./components/LoadingScreen";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 import { useActiveSection } from "./hooks/useActiveSection";
+import SplineSegment from "./components/SplineSegment";
+import ContentSection from "./components/ContentSection";
+import BottomNav from "./components/BottomNav";
+
+const TIMELINE_SEGMENTS = [
+  {
+    spline: {
+      id: "spline-segment-1",
+      dataSection: 1,
+      label: "California Mountain Snake",
+      description:
+        "Establish the sterile gallery frame. The camera glides along the surgical rails.",
+    },
+    content: {
+      id: "content-section-1",
+      dataSection: 2,
+      headline: "Interlude I",
+      subline: "White Field",
+    },
+  },
+  {
+    spline: {
+      id: "spline-segment-2",
+      dataSection: 3,
+      label: "Chronicle of Sutures",
+      description:
+        "Rotate around the medical armature highlighting the iridescent textiles.",
+    },
+    content: {
+      id: "content-section-2",
+      dataSection: 4,
+      headline: "Interlude II",
+      subline: "Enter Capsule",
+    },
+  },
+  {
+    spline: {
+      id: "spline-segment-3",
+      dataSection: 5,
+      label: "Specimen Extraction",
+      description:
+        "Descend toward the vault, revealing translucent plastics and chrome sutures.",
+    },
+    content: {
+      id: "content-section-3",
+      dataSection: 6,
+      headline: "Interlude III",
+      subline: "Archive Pause",
+    },
+  },
+];
 
 export default function Home() {
   const { cameraState, scrollToSection } = useSmoothScroll();
@@ -56,10 +102,12 @@ export default function Home() {
 
   const canDismiss = splineReady && (hydrated || docLoaded);
 
+  const handleNavSelect = (index: number) => {
+    scrollToSection(index, { targetType: "content", center: true });
+  };
+
   return (
     <main className="relative">
-      {/* Fixed 4-Wall Navigation */}
-      <WallNav activeIndex={activeIndex} scrollToSection={scrollToSection} />
 
       {/* Fixed Spline canvas - full viewport */}
       <SplineSceneClient cameraState={cameraState} />
@@ -67,12 +115,34 @@ export default function Home() {
       {/* Global vignette above Spline, below UI */}
       <VignetteOverlay />
 
+      {/* Bottom navigation */}
+      <BottomNav activeIndex={activeIndex} onNavigate={handleNavSelect} />
+
       {/* Scrollable sections container (above vignette) */}
       <div className="relative z-20">
-        <Section1 />
-        <Section2 />
-        <Section3 />
-        <Section4 />
+        {TIMELINE_SEGMENTS.map((segment, index) => (
+          <Fragment key={segment.spline.id}>
+            <SplineSegment
+              id={segment.spline.id}
+              dataSection={segment.spline.dataSection}
+              index={index + 1}
+              navIndex={index}
+              label={segment.spline.label}
+              description={segment.spline.description}
+            />
+            <ContentSection
+              id={segment.content.id}
+              dataSection={segment.content.dataSection}
+              navIndex={index}
+              headline={segment.content.headline}
+              subline={segment.content.subline}
+            />
+          </Fragment>
+        ))}
+        <div
+          aria-hidden="true"
+          className="h-screen w-full bg-transparent"
+        />
       </div>
 
       {/* Loading overlay (covers all until ready, then fades out and unmounts) */}

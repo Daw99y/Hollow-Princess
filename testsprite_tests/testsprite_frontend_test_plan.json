@@ -1,0 +1,412 @@
+[
+  {
+    "id": "TC001",
+    "title": "Loading Screen Completes After Assets Ready",
+    "description": "Verify that the loading screen is displayed initially and fades out only after all 3D assets and the first content section are fully loaded and ready.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the site landing page."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the loading screen overlay is visible upon page load."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the loading screen fades out only after the 3D Spline model and the first section are fully loaded."
+      },
+      {
+        "type": "assertion",
+        "description": "Assert that after fade out, the main content including header and 3D scene is visible."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Fixed Frosted Glass Header Rendering",
+    "description": "Ensure the header remains fixed at the top with correct frosted glass effect, soft brand typography, and proper z-index layering throughout scrolling.",
+    "category": "ui",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Load the main page."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the header is fixed and visible on viewport top."
+      },
+      {
+        "type": "assertion",
+        "description": "Check the frosted glass visual effect is correctly applied and consistent on different backgrounds."
+      },
+      {
+        "type": "action",
+        "description": "Scroll through each content section."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the header retains its fixed position, layering above other page elements, with no flicker or z-index issues."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "3D Spline Scene Rendering and Camera Transitions",
+    "description": "Validate that the central 3D Spline object renders correctly and camera transitions synchronize smoothly with user scroll and section changes.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Load the page and wait for the 3D Spline scene to render."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the 3D model is present, correctly textured, and fully interactive."
+      },
+      {
+        "type": "action",
+        "description": "Scroll through the four main content sections slowly."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the camera transitions smoothly between predefined viewpoints, tied to the active content section."
+      },
+      {
+        "type": "action",
+        "description": "Use wall navigation to jump between sections."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm camera transitions animate smoothly without janks or visual glitches."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Wall Navigation Functionality and Accessibility",
+    "description": "Test wall navigation component highlights the active section properly, supports keyboard navigation, and announces active section to screen readers.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Load the page and verify wall navigation component is displayed fixed on screen."
+      },
+      {
+        "type": "action",
+        "description": "Scroll through content sections and observe wall navigation highlight updates."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the currently active section indicator in the wall navigation updates correspondingly."
+      },
+      {
+        "type": "action",
+        "description": "Use keyboard TAB and arrow keys to navigate through the wall navigation items."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm keyboard focus moves properly and navigation triggers scroll to correct sections."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate that screen readers announce the active section and keyboard focus states appropriately."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Scroll Indicator Behavior",
+    "description": "Verify scroll indicator pulses near the fold initially and fades out after the user's first scroll interaction.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Load the website and observe the scroll indicator near the viewport fold."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the scroll indicator pulses as per animation timing guidelines."
+      },
+      {
+        "type": "action",
+        "description": "Perform the first scroll action by the user."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the scroll indicator fades out smoothly after the first scroll."
+      },
+      {
+        "type": "action",
+        "description": "Scroll back up to verify indicator remains hidden."
+      },
+      {
+        "type": "assertion",
+        "description": "Scroll indicator does not reappear after initial fade out."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Section 2 Date and Location Alignment",
+    "description": "Validate strict left alignment of dates and right alignment of locations in Section 2 to avoid overlap with the central 3D scene.",
+    "category": "ui",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate or scroll directly to Section 2."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dates are aligned strictly on the left side."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify locations are aligned strictly on the right side."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm there is no visual overlap or collision with the central 3D spline scene."
+      },
+      {
+        "type": "action",
+        "description": "Test on various screen sizes and device types."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure alignment holds and no layout shifts or breakage occur."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Smooth Scrolling Integration via Lenis",
+    "description": "Check that smooth scrolling using Lenis works correctly without performance issues, jank, double scroll handlers, or keyboard navigation conflicts.",
+    "category": "performance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Load the page and observe scrolling behavior."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify scrolling is smooth and GPU accelerated."
+      },
+      {
+        "type": "action",
+        "description": "Attempt keyboard navigation using arrow keys, page up/down, and spacebar."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm keyboard navigation scrolls page correctly with no disruption."
+      },
+      {
+        "type": "action",
+        "description": "Check browser performance tools to ensure no double scroll event listeners or jank."
+      },
+      {
+        "type": "assertion",
+        "description": "Lenis integration does not cause any conflicts or degraded responsiveness."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Animation Timing and Easing Compliance",
+    "description": "Verify that all UI fades and scroll transitions comply with prescribed animation durations and easing functions.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Trigger UI fades such as loading screen fade out and content section fades."
+      },
+      {
+        "type": "assertion",
+        "description": "Measure animation durations and confirm fades do not exceed 1.2 seconds."
+      },
+      {
+        "type": "action",
+        "description": "Trigger scroll-based camera transitions or section changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure scroll transitions complete within 2 seconds using defined easing."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Performance Metrics Validation",
+    "description": "Ensure performance goals for First Contentful Paint (FCP) and Time to Interactive (TTI) are met on mid-tier devices.",
+    "category": "performance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Load the site on a mid-tier device or emulator with throttled CPU/network."
+      },
+      {
+        "type": "assertion",
+        "description": "Measure First Contentful Paint and confirm it completes within 2.5 seconds."
+      },
+      {
+        "type": "assertion",
+        "description": "Measure Time to Interactive and verify it is under 4 seconds."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Accessibility Checks for Keyboard, Contrast, and Reduced Motion",
+    "description": "Validate keyboard navigability, sufficient color contrast, and respect for reduced motion preferences site-wide.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate through all interactive elements using keyboard only."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm focus is clearly visible and navigation order is logical."
+      },
+      {
+        "type": "action",
+        "description": "Use automated accessibility tools and manual color contrast checks on UI elements."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no WCAG 2.1 AA contrast violations."
+      },
+      {
+        "type": "action",
+        "description": "Enable user OS reduced motion preference and reload site."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that all animations are reduced or disabled in compliance with reduced motion settings."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Vignette Overlay Toggle and Performance Fallback",
+    "description": "Test that vignette overlay displays subtly by default and can be toggled off to improve performance on low-power devices.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Load the page and verify vignette overlay is visible and subtle."
+      },
+      {
+        "type": "action",
+        "description": "Toggle vignette overlay off via UI controls or developer settings."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm vignette overlay disappears and performance improves."
+      },
+      {
+        "type": "action",
+        "description": "Simulate low-power mode or error states."
+      },
+      {
+        "type": "assertion",
+        "description": "Check for fallback activations such as static hero image and disabled animations."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Mobile Responsive Layout and Motion Simplification",
+    "description": "Verify that the site adapts layout and reduces motion on mobile devices to maintain a consistent and performant experience.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open site on various mobile devices and simulators."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate simplified content layouts are applied, avoiding desktop-specific overlaps or tight spacing."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm scroll-driven animations and 3D scene interactions use reduced motion variants."
+      },
+      {
+        "type": "action",
+        "description": "Check device type detection triggers correct styling and component variants."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure smooth scrolling remains functional and no UI breaks occur."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Error Handling and Fallback Activation",
+    "description": "Test system behavior when 3D assets fail to load or in low-power mode, including fallback to static hero images and disabling advanced motion features.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate 3D asset loading failure or trigger low-power device mode."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that a static hero image is displayed in place of the 3D spline scene."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that all advanced motion animations are disabled or replaced with static alternatives."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the site remains navigable and functional with no uncaught errors or crashes."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Section Content Integrity and Layout Stability",
+    "description": "Ensure all four content sections and modular cards render correctly with cinematic scroll animations, no layout shifts, and content does not overlap or cause visual glitches across devices.",
+    "category": "ui",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Scroll through each of the four main content sections sequentially."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that sections animate in with subtle fade and transform effects compliant with animation guidelines."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm modular cards within sections render properly and respond to scroll-triggered animations."
+      },
+      {
+        "type": "action",
+        "description": "Test on multiple screen sizes including mobile, tablet, and desktop."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure no layout shifts occur during loading or scrolling and no content overlaps within or between sections."
+      }
+    ]
+  }
+]

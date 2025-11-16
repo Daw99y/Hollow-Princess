@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "paranoid",
+    "projectPath": "/Users/daw99y/Documents/FEWD/CURSOR/projects/kms/paranoid",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-OdFxUA_2SQeZHucXjMBYK8c8grv0qx6Vuxi3KdIfqwOFBcbVk1YYpbj42nO9n0zLBWvPbYLnSZfNK0yGi1qS5Yu1ZDUtDfMaJ6EHKId-AXOOha477IK71xsFKFtBO6Py_1M"
+    }
+  },
+  "proxy": "http://ddc950d3-5c2f-4939-b228-4ff956f85f1d:8XrN5CGniLFYC5L2d3kg3lvaxhk4ooc0@tun.testsprite.com:8080"
+}

@@ -1,0 +1,141 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "React 19",
+    "Next.js (App Router)",
+    "Tailwind CSS v4",
+    "Framer Motion",
+    "Lenis",
+    "Spline (React Runtime)",
+    "ESLint 9",
+    "Vercel Speed Insights",
+    "GSAP"
+  ],
+  "features": [
+    {
+      "name": "Application layout and global styles",
+      "description": "App shell, metadata, and global Tailwind setup for the entire site.",
+      "files": [
+        "app/layout.tsx",
+        "app/globals.css"
+      ]
+    },
+    {
+      "name": "Home page composition",
+      "description": "Entry page composing header, 3D scene, navigation wall, and content sections.",
+      "files": [
+        "app/page.tsx"
+      ]
+    },
+    {
+      "name": "Capsule header",
+      "description": "Frosted-glass header with brand typography and cinematic entrance using Framer Motion.",
+      "files": [
+        "app/components/CapsuleHeader.tsx"
+      ]
+    },
+    {
+      "name": "Loading screen",
+      "description": "Initial loading overlay for assets and 3D scene readiness.",
+      "files": [
+        "app/components/LoadingScreen.tsx"
+      ]
+    },
+    {
+      "name": "Location button",
+      "description": "Minimal location selector/button component consistent with brand aesthetic.",
+      "files": [
+        "app/components/LocationButton.tsx"
+      ]
+    },
+    {
+      "name": "Vignette overlay",
+      "description": "Subtle vignette effect overlay to focus the scene center.",
+      "files": [
+        "app/components/VignetteOverlay.tsx"
+      ]
+    },
+    {
+      "name": "Wall navigation",
+      "description": "Fixed wall-based navigation with active section tracking.",
+      "files": [
+        "app/components/WallNav.tsx"
+      ]
+    },
+    {
+      "name": "3D Spline scene (server wrapper)",
+      "description": "Server-side wrapper for Spline 3D scene integration.",
+      "files": [
+        "app/components/SplineScene.tsx"
+      ]
+    },
+    {
+      "name": "3D Spline scene (client runtime)",
+      "description": "Client component integrating @splinetool/react-spline with camera management.",
+      "files": [
+        "app/components/SplineSceneClient.tsx",
+        "app/types/camera.ts"
+      ]
+    },
+    {
+      "name": "Content sections",
+      "description": "Cinematic sections with scroll-driven motion; desktop-first with simplified mobile handling.",
+      "files": [
+        "app/components/sections/Section1.tsx",
+        "app/components/sections/Section2.tsx",
+        "app/components/sections/Section3.tsx",
+        "app/components/sections/Section4.tsx",
+        "app/components/sections/Card.tsx"
+      ]
+    },
+    {
+      "name": "Active section tracking",
+      "description": "Hook to track the currently active section for navigation and state.",
+      "files": [
+        "app/hooks/useActiveSection.ts"
+      ]
+    },
+    {
+      "name": "Smooth scrolling (Lenis)",
+      "description": "Hook to initialize Lenis for GPU-friendly smooth scrolling.",
+      "files": [
+        "app/hooks/useSmoothScroll.ts"
+      ]
+    },
+    {
+      "name": "Device type detection",
+      "description": "Hook for responsive logic based on device type.",
+      "files": [
+        "app/hooks/useDeviceType.ts"
+      ]
+    },
+    {
+      "name": "Public assets",
+      "description": "Images and videos used in sections and cinematic visuals.",
+      "files": [
+        "public/images/t-p-t-01.png",
+        "public/images/t-p-t-02.png",
+        "public/images/top-pants-v05.png",
+        "public/mobile-scroll-video.mp4",
+        "public/file.svg",
+        "public/globe.svg",
+        "public/window.svg"
+      ]
+    },
+    {
+      "name": "Project configuration",
+      "description": "Next.js, ESLint, Tailwind, and TypeScript configuration files.",
+      "files": [
+        "package.json",
+        "tsconfig.json",
+        "next.config.ts",
+        "postcss.config.mjs",
+        "eslint.config.mjs"
+      ]
+    }
+  ]
+}
+
+
+
+
