@@ -15,45 +15,39 @@ const TIMELINE_SEGMENTS = [
     spline: {
       id: "spline-segment-1",
       dataSection: 1,
-      label: "California Mountain Snake",
-      description:
-        "Establish the sterile gallery frame. The camera glides along the surgical rails.",
     },
     content: {
       id: "content-section-1",
       dataSection: 2,
       headline: "Interlude I",
-      subline: "White Field",
+      subline: "Capsule Brief",
+      copy: `Sterile tailoring, calibrated to midnight. Each layer is honed for a clinical silhouette, balancing chrome restraint with threadbare softness in anticipation of the field.`,
     },
   },
   {
     spline: {
       id: "spline-segment-2",
       dataSection: 3,
-      label: "Chronicle of Sutures",
-      description:
-        "Rotate around the medical armature highlighting the iridescent textiles.",
     },
     content: {
       id: "content-section-2",
       dataSection: 4,
       headline: "Interlude II",
-      subline: "Enter Capsule",
+      subline: "Field Stations",
+      copy: `Temporary coordinates stretch from downtown galleries to neutral warehouses. The pop-up itinerary traces glassy corridors, each station offering a staged pause for the capsule to materialize.`,
     },
   },
   {
     spline: {
       id: "spline-segment-3",
       dataSection: 5,
-      label: "Specimen Extraction",
-      description:
-        "Descend toward the vault, revealing translucent plastics and chrome sutures.",
     },
     content: {
       id: "content-section-3",
       dataSection: 6,
       headline: "Interlude III",
-      subline: "Archive Pause",
+      subline: "Acquisition",
+      copy: `Access is curated and deliberate—inventory logged, checkout ambient. Reserve a piece through the capsule's coded channel and let the chrome-metaled ritual begin.`,
     },
   },
 ];
@@ -125,10 +119,7 @@ export default function Home() {
             <SplineSegment
               id={segment.spline.id}
               dataSection={segment.spline.dataSection}
-              index={index + 1}
               navIndex={index}
-              label={segment.spline.label}
-              description={segment.spline.description}
             />
             <ContentSection
               id={segment.content.id}
@@ -136,6 +127,7 @@ export default function Home() {
               navIndex={index}
               headline={segment.content.headline}
               subline={segment.content.subline}
+              children={segment.content.copy}
             />
           </Fragment>
         ))}
