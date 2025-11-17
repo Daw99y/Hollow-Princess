@@ -21,7 +21,7 @@ const TIMELINE_SEGMENTS = [
       dataSection: 2,
       headline: "Interlude I",
       subline: "Capsule Brief",
-      copy: `Sterile tailoring, calibrated to midnight. Each layer is honed for a clinical silhouette, balancing chrome restraint with threadbare softness in anticipation of the field.`,
+        copy: "Capsule narrative and silhouettes will be detailed here.",
     },
   },
   {
@@ -34,7 +34,7 @@ const TIMELINE_SEGMENTS = [
       dataSection: 4,
       headline: "Interlude II",
       subline: "Field Stations",
-      copy: `Temporary coordinates stretch from downtown galleries to neutral warehouses. The pop-up itinerary traces glassy corridors, each station offering a staged pause for the capsule to materialize.`,
+        copy: "Pop-up shop locations and dates will be listed here.",
     },
   },
   {
@@ -47,7 +47,7 @@ const TIMELINE_SEGMENTS = [
       dataSection: 6,
       headline: "Interlude III",
       subline: "Acquisition",
-      copy: `Access is curated and deliberate—inventory logged, checkout ambient. Reserve a piece through the capsule's coded channel and let the chrome-metaled ritual begin.`,
+        copy: "Purchase instructions and availability notes will appear here.",
     },
   },
 ];
