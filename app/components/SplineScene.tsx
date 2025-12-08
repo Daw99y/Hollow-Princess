@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import Spline from "@splinetool/react-spline";
-import { Application } from "@splinetool/runtime";
-import { CameraState } from "../types/camera";
-import { useIsMobileOrTablet } from "../hooks/useDeviceType";
+import { useEffect, useRef } from 'react';
+import Spline from '@splinetool/react-spline';
+import { Application } from '@splinetool/runtime';
+import { CameraState } from '../types/camera';
+import { useIsMobileOrTablet } from '../hooks/useDeviceType';
 
 interface SplineSceneProps {
   cameraState: CameraState;
@@ -13,8 +13,8 @@ interface SplineSceneProps {
 export default function SplineScene({ cameraState }: SplineSceneProps) {
   const isMobile = useIsMobileOrTablet();
   const sceneUrl = isMobile
-    ? "https://prod.spline.design/jL28RVVYWYZQ48eo/scene.splinecode"
-    : "https://prod.spline.design/iu41ezeHIYG8Uwym/scene.splinecode";
+    ? 'https://prod.spline.design/jL28RVVYWYZQ48eo/scene.splinecode'
+    : 'https://prod.spline.design/iu41ezeHIYG8Uwym/scene.splinecode';
   const splineRef = useRef<Application | null>(null);
   const cameraRef = useRef<any>(null);
   const cameraStateRef = useRef<CameraState>(cameraState);
@@ -94,40 +94,40 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
 
     // Start the animation loop
     animationIdRef.current = requestAnimationFrame(updateCamera);
-    console.log("Camera update loop started");
+    console.log('Camera update loop started');
   };
 
   const onLoad = (spline: Application) => {
     splineRef.current = spline;
     // Find the camera in the scene - camera is named "CameraX"
-    const camera = spline.findObjectByName("CameraX");
+    const camera = spline.findObjectByName('CameraX');
     if (camera) {
       cameraRef.current = camera;
-      console.log("CameraX found successfully");
+      console.log('CameraX found successfully');
     } else {
       // Fallback: try alternative names
       const fallbackCamera =
-        spline.findObjectByName("Camera") ||
-        spline.findObjectByName("camera") ||
-        spline.findObjectByName("Main Camera");
+        spline.findObjectByName('Camera') ||
+        spline.findObjectByName('camera') ||
+        spline.findObjectByName('Main Camera');
       if (fallbackCamera) {
         cameraRef.current = fallbackCamera;
-        console.log("Camera found with fallback name");
+        console.log('Camera found with fallback name');
       } else {
-        console.warn("CameraX not found, attempting to access scene camera");
+        console.warn('CameraX not found, attempting to access scene camera');
         // Access camera through scene if available
         const scene = (spline as any).scene;
         if (scene && scene.children) {
           const foundCamera = scene.children.find(
             (obj: any) =>
-              obj.type === "PerspectiveCamera" ||
-              obj.type === "OrthographicCamera"
+              obj.type === 'PerspectiveCamera' ||
+              obj.type === 'OrthographicCamera'
           );
           if (foundCamera) {
             cameraRef.current = foundCamera;
-            console.log("Camera found via scene children");
+            console.log('Camera found via scene children');
           } else {
-            console.error("Camera not found by any method");
+            console.error('Camera not found by any method');
           }
         }
       }
@@ -139,8 +139,8 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
     }
 
     // Signal Spline readiness to the app shell
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("spline:ready"));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('spline:ready'));
     }
   };
 
@@ -149,7 +149,7 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
     // Check periodically if camera is ready
     const checkInterval = setInterval(() => {
       if (splineRef.current && cameraRef.current && !isAnimatingRef.current) {
-        console.log("Camera now ready, starting animation loop");
+        console.log('Camera now ready, starting animation loop');
         startAnimationLoop();
         clearInterval(checkInterval);
       }
@@ -183,9 +183,9 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
       if (splineRef.current) {
         try {
           splineRef.current.dispose();
-          console.log("Spline Application disposed successfully");
+          console.log('Spline Application disposed successfully');
         } catch (e) {
-          console.warn("Error disposing Spline:", e);
+          console.warn('Error disposing Spline:', e);
         }
         splineRef.current = null;
       }
@@ -205,22 +205,22 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
         // Page hidden - cancel animation frame to save resources
         cancelAnimationFrame(animationIdRef.current);
         isAnimatingRef.current = false;
-        console.log("Page hidden - animation paused");
+        console.log('Page hidden - animation paused');
       } else if (!document.hidden && splineRef.current && cameraRef.current) {
         // Page visible - restart animation loop
-        console.log("Page visible - restarting animation");
+        console.log('Page visible - restarting animation');
         startAnimationLoop();
       }
     };
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () =>
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isMobile]);
 
   return (
     <div className="fixed inset-0 z-0">
-      <Spline scene={sceneUrl} onLoad={onLoad} className="w-full h-full" />
+      <Spline scene={sceneUrl} onLoad={onLoad} className="h-full w-full" />
     </div>
   );
 }

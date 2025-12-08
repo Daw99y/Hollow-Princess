@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { ReactNode } from "react";
-import { motion } from "framer-motion";
+import { ReactNode } from 'react';
+import { motion } from 'framer-motion';
 
 interface ContentSectionProps {
   id: string;
@@ -16,8 +16,8 @@ export default function ContentSection({
   id,
   dataSection,
   navIndex,
-  headline = "Interlude",
-  subline = "White void placeholder",
+  headline = 'Interlude',
+  subline = 'White void placeholder',
   children,
 }: ContentSectionProps) {
   return (
@@ -30,16 +30,16 @@ export default function ContentSection({
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: false, amount: 0.6 }}
-      transition={{ duration: 0.6, ease: "easeInOut" }}
+      transition={{ duration: 0.6, ease: 'easeInOut' }}
     >
       <div className="flex flex-col items-center space-y-4 px-8 text-center text-neutral-600">
-        <p className="font-geist-mono text-xs uppercase tracking-[0.35em] text-neutral-500">
+        <p className="font-geist-mono text-xs tracking-[0.35em] text-neutral-500 uppercase">
           {subline}
         </p>
         <h3 className="font-geist-sans text-4xl tracking-widest text-neutral-700">
           {headline}
         </h3>
-        <div className="w-full max-w-3xl font-geist-sans text-sm tracking-wide text-neutral-500">
+        <div className="font-geist-sans w-full max-w-3xl text-sm tracking-wide text-neutral-500">
           {children ?? (
             <span className="opacity-70">
               Future editorial copy will appear here. This section intentionally
@@ -51,4 +51,3 @@ export default function ContentSection({
     </motion.section>
   );
 }
-

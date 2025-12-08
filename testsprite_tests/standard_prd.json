@@ -66,67 +66,47 @@
       {
         "name": "Application layout and global styles",
         "description": "App shell, metadata, and global Tailwind setup for the entire site.",
-        "files": [
-          "app/layout.tsx",
-          "app/globals.css"
-        ]
+        "files": ["app/layout.tsx", "app/globals.css"]
       },
       {
         "name": "Home page composition",
         "description": "Entry page composing header, 3D scene, navigation wall, and content sections.",
-        "files": [
-          "app/page.tsx"
-        ]
+        "files": ["app/page.tsx"]
       },
       {
         "name": "Capsule header",
         "description": "Frosted-glass header with brand typography and cinematic entrance using Framer Motion.",
-        "files": [
-          "app/components/CapsuleHeader.tsx"
-        ]
+        "files": ["app/components/CapsuleHeader.tsx"]
       },
       {
         "name": "Loading screen",
         "description": "Initial loading overlay for assets and 3D scene readiness.",
-        "files": [
-          "app/components/LoadingScreen.tsx"
-        ]
+        "files": ["app/components/LoadingScreen.tsx"]
       },
       {
         "name": "Location button",
         "description": "Minimal location selector/button component consistent with brand aesthetic.",
-        "files": [
-          "app/components/LocationButton.tsx"
-        ]
+        "files": ["app/components/LocationButton.tsx"]
       },
       {
         "name": "Vignette overlay",
         "description": "Subtle vignette effect overlay to focus the scene center.",
-        "files": [
-          "app/components/VignetteOverlay.tsx"
-        ]
+        "files": ["app/components/VignetteOverlay.tsx"]
       },
       {
         "name": "Wall navigation",
         "description": "Fixed wall-based navigation with active section tracking.",
-        "files": [
-          "app/components/WallNav.tsx"
-        ]
+        "files": ["app/components/WallNav.tsx"]
       },
       {
         "name": "3D Spline scene (server wrapper)",
         "description": "Server-side wrapper for Spline 3D scene integration.",
-        "files": [
-          "app/components/SplineScene.tsx"
-        ]
+        "files": ["app/components/SplineScene.tsx"]
       },
       {
         "name": "3D Spline scene (client runtime)",
         "description": "Client component integrating @splinetool/react-spline with camera management.",
-        "files": [
-          "app/components/SplineSceneClient.tsx",
-          "app/types/camera.ts"
-        ]
+        "files": ["app/components/SplineSceneClient.tsx", "app/types/camera.ts"]
       },
       {
         "name": "Content sections",
@@ -142,23 +122,17 @@
       {
         "name": "Active section tracking",
         "description": "Hook to track the currently active section for navigation and state.",
-        "files": [
-          "app/hooks/useActiveSection.ts"
-        ]
+        "files": ["app/hooks/useActiveSection.ts"]
       },
       {
         "name": "Smooth scrolling (Lenis)",
         "description": "Hook to initialize Lenis for GPU-friendly smooth scrolling.",
-        "files": [
-          "app/hooks/useSmoothScroll.ts"
-        ]
+        "files": ["app/hooks/useSmoothScroll.ts"]
       },
       {
         "name": "Device type detection",
         "description": "Hook for responsive logic based on device type.",
-        "files": [
-          "app/hooks/useDeviceType.ts"
-        ]
+        "files": ["app/hooks/useDeviceType.ts"]
       },
       {
         "name": "Public assets",

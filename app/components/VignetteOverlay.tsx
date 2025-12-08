@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 export default function VignetteOverlay() {
   return (
@@ -7,5 +7,3 @@ export default function VignetteOverlay() {
     </div>
   );
 }
-
-

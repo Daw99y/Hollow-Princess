@@ -325,8 +325,3 @@ M6: Performance tuning and polish
 - Prefer composition (`Card.tsx`) over bespoke layouts.
 - Tailwind-only styling; remove dead classes as designs evolve.
 
-
-
-
-
-

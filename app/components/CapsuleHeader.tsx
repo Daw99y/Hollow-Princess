@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function CapsuleHeader() {
   const { scrollY } = useScroll();
@@ -12,9 +12,9 @@ export default function CapsuleHeader() {
   const sublineOpacity = useTransform(scrollY, [0, 200], [1, 0.5]);
 
   return (
-    <motion.div className="fixed top-12 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none text-center max-w-full px-4">
+    <motion.div className="pointer-events-none fixed top-12 left-1/2 z-50 max-w-full -translate-x-1/2 transform px-4 text-center">
       <motion.h1
-        className="font-gothic text-[clamp(1.5rem,5vw,3rem)] text-neutral-800 tracking-widest relative whitespace-nowrap"
+        className="font-gothic relative text-[clamp(1.5rem,5vw,3rem)] tracking-widest whitespace-nowrap text-neutral-800"
         style={{
           scale: titleScale,
           opacity: titleOpacity,
@@ -24,7 +24,7 @@ export default function CapsuleHeader() {
         Hollow Princess
       </motion.h1>
       <motion.h2
-        className="font-geist-sans text-xs text-neutral-500/70 dark:text-neutral-400/70 tracking-widest font-light mt-2"
+        className="font-geist-sans mt-2 text-xs font-light tracking-widest text-neutral-500/70 dark:text-neutral-400/70"
         style={{
           opacity: sublineOpacity,
           scale: titleScale,

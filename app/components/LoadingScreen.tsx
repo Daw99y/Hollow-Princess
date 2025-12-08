@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { AnimatePresence, motion } from "framer-motion";
-import VignetteOverlay from "./VignetteOverlay";
+import { AnimatePresence, motion } from 'framer-motion';
+import VignetteOverlay from './VignetteOverlay';
 
 interface LoadingScreenProps {
   done: boolean;
@@ -17,12 +17,12 @@ export default function LoadingScreen({ done, onFinish }: LoadingScreenProps) {
         initial={{ opacity: 1 }}
         animate={{ opacity: done ? 0 : 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.9, ease: "easeInOut" }}
+        transition={{ duration: 0.9, ease: 'easeInOut' }}
         onAnimationComplete={() => {
           if (done) onFinish();
         }}
       >
-        <span className="font-gothic text-2xl md:text-4xl text-black tracking-widest">
+        <span className="font-gothic text-2xl tracking-widest text-black md:text-4xl">
           Hollow Princess
         </span>
         <VignetteOverlay />

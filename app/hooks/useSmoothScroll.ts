@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef } from "react";
-import Lenis from "lenis";
-import { CameraState } from "../types/camera";
+import { useEffect, useState, useRef } from 'react';
+import Lenis from 'lenis';
+import { CameraState } from '../types/camera';
 
 // Camera positions for each spline segment boundary
 const CAMERA_STATES: CameraState[] = [
@@ -40,22 +40,22 @@ const CAMERA_SEGMENTS: CameraSegment[] = CAMERA_STATES.map((state, index) => {
 
 type TimelineBand =
   | {
-      type: "spline";
+      type: 'spline';
       segmentIndex: number;
       duration: number;
     }
   | {
-      type: "content";
+      type: 'content';
       duration: number;
     };
 
 const TIMELINE_BANDS: TimelineBand[] = [
-  { type: "spline", segmentIndex: 0, duration: 0.25 },
-  { type: "content", duration: 0.1 },
-  { type: "spline", segmentIndex: 1, duration: 0.25 },
-  { type: "content", duration: 0.1 },
-  { type: "spline", segmentIndex: 2, duration: 0.25 },
-  { type: "content", duration: 0.1 },
+  { type: 'spline', segmentIndex: 0, duration: 0.25 },
+  { type: 'content', duration: 0.1 },
+  { type: 'spline', segmentIndex: 1, duration: 0.25 },
+  { type: 'content', duration: 0.1 },
+  { type: 'spline', segmentIndex: 2, duration: 0.25 },
+  { type: 'content', duration: 0.1 },
 ];
 
 const TIMELINE_TOTAL_LENGTH = TIMELINE_BANDS.reduce(
@@ -74,7 +74,7 @@ const SPLINE_RANGES: SplineRange[] = [];
 (() => {
   let cursor = 0;
   TIMELINE_BANDS.forEach((band) => {
-    if (band.type === "spline") {
+    if (band.type === 'spline') {
       SPLINE_RANGES.push({
         segmentIndex: band.segmentIndex,
         start: cursor,
@@ -94,8 +94,8 @@ export function useSmoothScroll() {
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
       infinite: false,
@@ -111,7 +111,7 @@ export function useSmoothScroll() {
     requestAnimationFrame(raf);
 
     // Connect Lenis to window scroll
-    lenis.on("scroll", () => {
+    lenis.on('scroll', () => {
       // This will be handled by the second useEffect
     });
 
@@ -129,7 +129,7 @@ export function useSmoothScroll() {
     // Wait for Lenis to be initialized and sections to be available
     const timeoutId = setTimeout(() => {
       if (!lenisRef.current) {
-        console.warn("Lenis not initialized yet");
+        console.warn('Lenis not initialized yet');
         return;
       }
 
@@ -143,14 +143,16 @@ export function useSmoothScroll() {
             1
           );
         const normalizedScroll = Math.min(Math.max(scroll / limit, 0), 1);
-        const timelinePosition =
-          normalizedScroll * TIMELINE_TOTAL_LENGTH;
+        const timelinePosition = normalizedScroll * TIMELINE_TOTAL_LENGTH;
 
         let activeRange: SplineRange | null = null;
         let previousRange: SplineRange | null = null;
 
         for (const range of SPLINE_RANGES) {
-          if (timelinePosition >= range.start && timelinePosition <= range.end) {
+          if (
+            timelinePosition >= range.start &&
+            timelinePosition <= range.end
+          ) {
             activeRange = range;
             break;
           }
@@ -227,7 +229,7 @@ export function useSmoothScroll() {
         setCameraState(interpolateSegment(previousRange.segmentIndex, 1));
       };
 
-      lenis.on("scroll", handleScroll);
+      lenis.on('scroll', handleScroll);
 
       // Initial call after a short delay to ensure limit is set
       setTimeout(() => {
@@ -236,31 +238,34 @@ export function useSmoothScroll() {
       }, 100);
 
       // Store cleanup function
-      (lenis as Lenis & { _cameraScrollCleanup?: () => void })._cameraScrollCleanup = () => {
-        lenis.off("scroll", handleScroll);
+      (
+        lenis as Lenis & { _cameraScrollCleanup?: () => void }
+      )._cameraScrollCleanup = () => {
+        lenis.off('scroll', handleScroll);
       };
     }, 100);
 
     return () => {
       clearTimeout(timeoutId);
       if (lenisRef.current) {
-        const lenisWithCleanup = lenisRef.current as Lenis & { _cameraScrollCleanup?: () => void };
+        const lenisWithCleanup = lenisRef.current as Lenis & {
+          _cameraScrollCleanup?: () => void;
+        };
         if (lenisWithCleanup._cameraScrollCleanup) {
           lenisWithCleanup._cameraScrollCleanup();
         }
-        }
+      }
     };
   }, []);
 
   const scrollToSection = (
     sectionIndex: number,
-    options?: { targetType?: "spline" | "content"; center?: boolean }
+    options?: { targetType?: 'spline' | 'content'; center?: boolean }
   ) => {
     if (!lenisRef.current) return;
 
-    const targetType = options?.targetType ?? "spline";
-    const selector =
-      `[data-nav-group="${sectionIndex}"][data-segment-type="${targetType}"]`;
+    const targetType = options?.targetType ?? 'spline';
+    const selector = `[data-nav-group="${sectionIndex}"][data-segment-type="${targetType}"]`;
     const target = document.querySelector<HTMLElement>(selector);
 
     if (!target) {

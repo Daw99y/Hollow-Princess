@@ -1,53 +1,53 @@
-"use client";
+'use client';
 
-import { Fragment, useEffect, useState } from "react";
-import SplineSceneClient from "./components/SplineSceneClient";
-import VignetteOverlay from "./components/VignetteOverlay";
-import LoadingScreen from "./components/LoadingScreen";
-import { useSmoothScroll } from "./hooks/useSmoothScroll";
-import { useActiveSection } from "./hooks/useActiveSection";
-import SplineSegment from "./components/SplineSegment";
-import ContentSection from "./components/ContentSection";
-import BottomNav from "./components/BottomNav";
+import { Fragment, useEffect, useState } from 'react';
+import SplineSceneClient from './components/SplineSceneClient';
+import VignetteOverlay from './components/VignetteOverlay';
+import LoadingScreen from './components/LoadingScreen';
+import { useSmoothScroll } from './hooks/useSmoothScroll';
+import { useActiveSection } from './hooks/useActiveSection';
+import SplineSegment from './components/SplineSegment';
+import ContentSection from './components/ContentSection';
+import BottomNav from './components/BottomNav';
 
 const TIMELINE_SEGMENTS = [
   {
     spline: {
-      id: "spline-segment-1",
+      id: 'spline-segment-1',
       dataSection: 1,
     },
     content: {
-      id: "content-section-1",
+      id: 'content-section-1',
       dataSection: 2,
-      headline: "Interlude I",
-      subline: "Capsule Brief",
-        copy: "Capsule narrative and silhouettes will be detailed here.",
+      headline: 'Interlude I',
+      subline: 'Capsule Brief',
+      copy: 'Capsule narrative and silhouettes will be detailed here.',
     },
   },
   {
     spline: {
-      id: "spline-segment-2",
+      id: 'spline-segment-2',
       dataSection: 3,
     },
     content: {
-      id: "content-section-2",
+      id: 'content-section-2',
       dataSection: 4,
-      headline: "Interlude II",
-      subline: "Field Stations",
-        copy: "Pop-up shop locations and dates will be listed here.",
+      headline: 'Interlude II',
+      subline: 'Field Stations',
+      copy: 'Pop-up shop locations and dates will be listed here.',
     },
   },
   {
     spline: {
-      id: "spline-segment-3",
+      id: 'spline-segment-3',
       dataSection: 5,
     },
     content: {
-      id: "content-section-3",
+      id: 'content-section-3',
       dataSection: 6,
-      headline: "Interlude III",
-      subline: "Acquisition",
-        copy: "Purchase instructions and availability notes will appear here.",
+      headline: 'Interlude III',
+      subline: 'Acquisition',
+      copy: 'Purchase instructions and availability notes will appear here.',
     },
   },
 ];
@@ -71,25 +71,25 @@ export default function Home() {
     const handleLoad = () => setDocLoaded(true);
     const handleSplineReady = () => setSplineReady(true);
 
-    if (document.readyState === "complete") {
+    if (document.readyState === 'complete') {
       setDocLoaded(true);
     } else {
-      window.addEventListener("load", handleLoad, { once: true });
+      window.addEventListener('load', handleLoad, { once: true });
     }
-    window.addEventListener("spline:ready", handleSplineReady, { once: true });
+    window.addEventListener('spline:ready', handleSplineReady, { once: true });
 
     return () => {
-      window.removeEventListener("load", handleLoad as any);
-      window.removeEventListener("spline:ready", handleSplineReady as any);
+      window.removeEventListener('load', handleLoad as any);
+      window.removeEventListener('spline:ready', handleSplineReady as any);
     };
   }, []);
 
   // Lock scroll while loader shown; restore after fade completes via onFinish
   useEffect(() => {
     if (showLoader) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
       return () => {
-        document.body.style.overflow = "";
+        document.body.style.overflow = '';
       };
     }
   }, [showLoader]);
@@ -97,12 +97,11 @@ export default function Home() {
   const canDismiss = splineReady && (hydrated || docLoaded);
 
   const handleNavSelect = (index: number) => {
-    scrollToSection(index, { targetType: "content", center: true });
+    scrollToSection(index, { targetType: 'content', center: true });
   };
 
   return (
     <main className="relative">
-
       {/* Fixed Spline canvas - full viewport */}
       <SplineSceneClient cameraState={cameraState} />
 
@@ -131,10 +130,7 @@ export default function Home() {
             />
           </Fragment>
         ))}
-        <div
-          aria-hidden="true"
-          className="h-screen w-full bg-transparent"
-        />
+        <div aria-hidden="true" className="h-screen w-full bg-transparent" />
       </div>
 
       {/* Loading overlay (covers all until ready, then fades out and unmounts) */}
@@ -143,7 +139,7 @@ export default function Home() {
           done={canDismiss}
           onFinish={() => {
             setShowLoader(false);
-            document.body.style.overflow = "";
+            document.body.style.overflow = '';
           }}
         />
       )}

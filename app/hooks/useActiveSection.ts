@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 
 export function useActiveSection() {
   const [activeIndex, setActiveIndex] = useState(-1);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const isAtTop = () => typeof window !== "undefined" && window.scrollY <= 10;
+  const isAtTop = () => typeof window !== 'undefined' && window.scrollY <= 10;
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (typeof window === 'undefined') {
       return;
     }
 
@@ -18,16 +18,16 @@ export function useActiveSection() {
       }
     };
 
-    window.addEventListener("scroll", handleTopReset, { passive: true });
+    window.addEventListener('scroll', handleTopReset, { passive: true });
     handleTopReset();
 
     return () => {
-      window.removeEventListener("scroll", handleTopReset);
+      window.removeEventListener('scroll', handleTopReset);
     };
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (typeof window === 'undefined') {
       return;
     }
 
@@ -43,7 +43,7 @@ export function useActiveSection() {
             return;
           }
 
-          const navGroupAttr = entry.target.getAttribute("data-nav-group");
+          const navGroupAttr = entry.target.getAttribute('data-nav-group');
           if (navGroupAttr) {
             const parsedNavIndex = parseInt(navGroupAttr, 10);
             if (!Number.isNaN(parsedNavIndex)) {
@@ -52,7 +52,7 @@ export function useActiveSection() {
             }
           }
 
-          const sectionNumber = entry.target.getAttribute("data-section");
+          const sectionNumber = entry.target.getAttribute('data-section');
           if (!sectionNumber) {
             return;
           }
@@ -62,22 +62,19 @@ export function useActiveSection() {
             return;
           }
 
-          const navIndex = Math.max(
-            0,
-            Math.floor((numericSection - 1) / 2)
-          );
+          const navIndex = Math.max(0, Math.floor((numericSection - 1) / 2));
           setActiveIndex(navIndex);
         });
       },
       {
         threshold: 0.5, // Trigger when 50% of section is visible
-        rootMargin: "-100px 0px -100px 0px" // Adjust trigger points
+        rootMargin: '-100px 0px -100px 0px', // Adjust trigger points
       }
     );
 
     // Get all sections with data-section attribute
     const sections = document.querySelectorAll('[data-section]');
-    
+
     // Observe each section
     sections.forEach((section) => {
       if (observerRef.current) {
