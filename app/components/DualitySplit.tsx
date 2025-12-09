@@ -87,7 +87,7 @@ export default function DualitySplit({
             layout
             onMouseEnter={() => setHoveredSide(outfit.side)}
             onMouseLeave={() => setHoveredSide(null)}
-            className="group relative h-full cursor-pointer overflow-hidden rounded-[40px] bg-white transition-all duration-700 ease-[0.22,1,0.36,1]"
+            className="group relative h-full cursor-pointer overflow-hidden rounded-[40px] border border-neutral-200 bg-white shadow-sm transition-all duration-700 ease-[0.22,1,0.36,1]"
             animate={{
               flex:
                 hoveredSide === outfit.side ? 2 : hoveredSide === null ? 1 : 1,
@@ -197,7 +197,7 @@ export default function DualitySplit({
         {OUTFITS.map((outfit) => (
           <div
             key={outfit.id}
-            className="relative flex h-full w-[85vw] flex-none snap-center flex-col overflow-hidden rounded-[40px] bg-white shadow-sm"
+            className="relative flex h-full w-[85vw] flex-none snap-center flex-col overflow-hidden rounded-[40px] border border-neutral-200 bg-white shadow-sm"
           >
             {/* Background Text & Info Button */}
             <div className="absolute inset-0 z-0 flex flex-col justify-between p-6">

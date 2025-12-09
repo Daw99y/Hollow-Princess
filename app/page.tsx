@@ -10,10 +10,12 @@ import SplineSegment from './components/SplineSegment';
 import ContentSection from './components/ContentSection';
 import Link from 'next/link';
 import BottomNav from './components/BottomNav';
-import DualitySplit from './components/DualitySplit';
-import LocationList from './components/LocationList';
-import ProductRack from './components/ProductRack';
-import CartModal from './components/CartModal';
+import dynamic from 'next/dynamic';
+
+const DualitySplit = dynamic(() => import('./components/DualitySplit'));
+const LocationList = dynamic(() => import('./components/LocationList'));
+const ProductRack = dynamic(() => import('./components/ProductRack'));
+const CartModal = dynamic(() => import('./components/CartModal'));
 
 export type CartItem = {
   id: string; // unique ID for cart entry (e.g. timestamp)

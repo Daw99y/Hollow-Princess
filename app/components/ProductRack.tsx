@@ -121,13 +121,11 @@ export default function ProductRack({
       <button
         onClick={onOpenCart}
         className={cx(
-          'absolute top-10 right-10 z-50 flex cursor-pointer flex-col items-end font-mono text-xs font-black tracking-widest text-black uppercase transition-transform duration-200 hover:text-black/70',
+          'absolute top-10 left-1/2 z-50 flex -translate-x-1/2 animate-pulse cursor-pointer flex-col items-center font-mono text-[10px] font-bold tracking-[0.2em] text-black uppercase hover:text-black/70',
           isAdded ? 'scale-110' : ''
         )}
       >
-        <div className="flex items-center space-x-2">
-          <span>CART - {cartCount}</span>
-        </div>
+        <span>CART</span>
       </button>
 
       {/* DESKTOP ACCORDION (Hidden on Mobile) */}
