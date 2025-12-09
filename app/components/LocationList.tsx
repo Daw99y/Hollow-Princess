@@ -90,7 +90,7 @@ export default function LocationList({
                   {(index + 1).toString().padStart(2, '0')}
                 </span>
                 <h3
-                  className="font-sans text-6xl font-black tracking-tighter text-transparent transition-all duration-300 group-hover:text-black md:text-8xl lg:text-9xl"
+                  className="font-sans text-4xl font-black tracking-tighter text-transparent transition-all duration-300 group-hover:text-black md:text-8xl lg:text-9xl"
                   style={{
                     WebkitTextStroke: '1px black',
                   }}
