@@ -145,7 +145,7 @@ export default function ProductRack({
             >
               {/* Image Layer - Full Height */}
               <div className="absolute inset-0 h-full w-full p-4">
-                <div className="relative h-full w-full overflow-hidden rounded-[24px] bg-neutral-50">
+                <div className="relative h-full w-full overflow-hidden rounded-[24px] bg-zinc-50 transition-colors duration-500 group-hover:bg-white">
                   <Image
                     src={product.image}
                     alt={product.name}
@@ -238,7 +238,7 @@ export default function ProductRack({
             className="relative flex h-full w-[85vw] flex-none snap-center flex-col overflow-hidden rounded-[32px] border border-neutral-200 bg-white shadow-sm"
           >
             {/* Image Layer - Top ~60% */}
-            <div className="relative w-full flex-[3] overflow-hidden rounded-t-[32px] bg-neutral-50 p-4">
+            <div className="relative w-full flex-[3] overflow-hidden rounded-t-[32px] bg-zinc-50 p-4">
               <div className="relative h-full w-full">
                 <Image
                   src={product.image}

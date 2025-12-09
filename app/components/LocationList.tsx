@@ -68,8 +68,8 @@ export default function LocationList({
         - p-8
         - bg-zinc-50 (or subtle glass)
       */}
-      <div className="w-full max-w-[95vw] rounded-[48px] bg-zinc-50 p-8 shadow-sm">
-        <div className="flex flex-col">
+      <div className="w-full max-w-[95vw] rounded-[48px] border border-neutral-200 bg-white p-4 shadow-sm">
+        <div className="flex w-full flex-col rounded-[32px] bg-zinc-50 p-8">
           {LOCATIONS.map((loc, index) => (
             <motion.div
               key={loc.city}
@@ -90,7 +90,7 @@ export default function LocationList({
                   {(index + 1).toString().padStart(2, '0')}
                 </span>
                 <h3
-                  className="font-tanker text-6xl tracking-widest text-transparent transition-all duration-300 group-hover:text-black md:text-8xl lg:text-9xl"
+                  className="font-sans text-6xl font-black tracking-tighter text-transparent transition-all duration-300 group-hover:text-black md:text-8xl lg:text-9xl"
                   style={{
                     WebkitTextStroke: '1px black',
                   }}
