@@ -1,23 +1,9 @@
 import type { Metadata } from 'next';
-import {
-  Geist,
-  Geist_Mono,
-  UnifrakturMaguntia,
-  Spectral,
-} from 'next/font/google';
+import { UnifrakturMaguntia } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import CapsuleHeader from './components/CapsuleHeader';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
 
 const unifrakturMaguntia = UnifrakturMaguntia({
   variable: '--font-gothic',
@@ -25,33 +11,17 @@ const unifrakturMaguntia = UnifrakturMaguntia({
   weight: '400',
 });
 
-const spectral = Spectral({
-  variable: '--font-spectral',
-  subsets: ['latin'],
-  weight: '300', // Light weight
+const satoshi = localFont({
+  src: '../public/fonts/Satoshi-Variable.woff2',
+  variable: '--font-satoshi',
+  display: 'swap',
 });
 
-export const metadata: Metadata = {
-  title: 'Hollow Princess',
-  description:
-    'Clothing of a fallen house, preserved out of duty rather than sentiment. Hollow Princess SS26 is defined by discipline, structure, and the absence of indulgence.',
-  keywords: [
-    'Hollow Princess',
-    'SS26',
-    'fashion',
-    'capsule',
-    'couture',
-    'soulslike',
-    'austere',
-  ],
-  authors: [{ name: 'NE-S' }],
-  openGraph: {
-    title: 'Hollow Princess',
-    description:
-      'Attire of a lost bloodline, maintained only to honor a dead lineage. Hollow Princess SS26 rejects ornament and embraces disciplined austerity.',
-    type: 'website',
-  },
-};
+const tanker = localFont({
+  src: '../public/fonts/Tanker-Regular.woff2',
+  variable: '--font-tanker',
+  display: 'swap',
+});
 
 export default function RootLayout({
   children,
@@ -61,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${unifrakturMaguntia.variable} ${spectral.variable} antialiased`}
+        className={`${satoshi.variable} ${unifrakturMaguntia.variable} ${tanker.variable} antialiased`}
       >
         <CapsuleHeader />
         {children}

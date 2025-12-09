@@ -8,7 +8,22 @@ import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
 import SplineSegment from './components/SplineSegment';
 import ContentSection from './components/ContentSection';
+import Link from 'next/link';
 import BottomNav from './components/BottomNav';
+import DualitySplit from './components/DualitySplit';
+import LocationList from './components/LocationList';
+import ProductRack from './components/ProductRack';
+import CartModal from './components/CartModal';
+
+export type CartItem = {
+  id: string; // unique ID for cart entry (e.g. timestamp)
+  productId: string;
+  name: string;
+  code: string;
+  price: number;
+  size: string;
+  image: string;
+};
 
 const TIMELINE_SEGMENTS = [
   {
@@ -22,6 +37,7 @@ const TIMELINE_SEGMENTS = [
       headline: 'Interlude I',
       subline: 'Capsule Brief',
       copy: 'Capsule narrative and silhouettes will be detailed here.',
+      type: 'duality',
     },
   },
   {
@@ -35,6 +51,7 @@ const TIMELINE_SEGMENTS = [
       headline: 'Interlude II',
       subline: 'Field Stations',
       copy: 'Pop-up shop locations and dates will be listed here.',
+      type: 'location_list',
     },
   },
   {
@@ -48,6 +65,7 @@ const TIMELINE_SEGMENTS = [
       headline: 'Interlude III',
       subline: 'Acquisition',
       copy: 'Purchase instructions and availability notes will appear here.',
+      type: 'product_rack',
     },
   },
 ];
@@ -60,6 +78,8 @@ export default function Home() {
   const [splineReady, setSplineReady] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [docLoaded, setDocLoaded] = useState<boolean>(false);
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   // Mark hydration
   useEffect(() => {
@@ -100,8 +120,22 @@ export default function Home() {
     scrollToSection(index, { targetType: 'content', center: true });
   };
 
+  const handleOpenCart = () => setIsCartOpen(true);
+  const handleCloseCart = () => setIsCartOpen(false);
+
+  const handleAddToCart = (item: Omit<CartItem, 'id'>) => {
+    const newItem = { ...item, id: Date.now().toString() };
+    setCartItems((prev) => [...prev, newItem]);
+  };
+
   return (
     <main className="relative">
+      <CartModal
+        isOpen={isCartOpen}
+        onClose={handleCloseCart}
+        items={cartItems}
+      />
+
       {/* Fixed Spline canvas - full viewport */}
       <SplineSceneClient cameraState={cameraState} />
 
@@ -120,14 +154,37 @@ export default function Home() {
               dataSection={segment.spline.dataSection}
               navIndex={index}
             />
-            <ContentSection
-              id={segment.content.id}
-              dataSection={segment.content.dataSection}
-              navIndex={index}
-              headline={segment.content.headline}
-              subline={segment.content.subline}
-              children={segment.content.copy}
-            />
+            {(segment.content as any).type === 'duality' ? (
+              <DualitySplit
+                id={segment.content.id}
+                dataSection={segment.content.dataSection}
+                navIndex={index}
+              />
+            ) : (segment.content as any).type === 'location_list' ? (
+              <LocationList
+                id={segment.content.id}
+                dataSection={segment.content.dataSection}
+                navIndex={index}
+              />
+            ) : (segment.content as any).type === 'product_rack' ? (
+              <ProductRack
+                id={segment.content.id}
+                dataSection={segment.content.dataSection}
+                navIndex={index}
+                onOpenCart={handleOpenCart}
+                cartCount={cartItems.length}
+                onAddToCart={handleAddToCart}
+              />
+            ) : (
+              <ContentSection
+                id={segment.content.id}
+                dataSection={segment.content.dataSection}
+                navIndex={index}
+                headline={segment.content.headline}
+                subline={segment.content.subline}
+                children={segment.content.copy}
+              />
+            )}
           </Fragment>
         ))}
         <div aria-hidden="true" className="h-screen w-full bg-transparent" />
