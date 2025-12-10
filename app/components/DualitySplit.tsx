@@ -40,7 +40,7 @@ const OUTFITS = [
     side: 'right' as const,
     title: 'Benediction',
     codeNum: '02 // 5050S',
-    image: '/images/outfitsandgarments/5050-outfit-transp-v2.png',
+    image: '/images/outfitsandgarments/benediction-outfit.png',
     narrative: {
       header: 'BENEDICTION // FLUID STATE',
       subHeader: 'SUBJECT: THE "5050" WAVE VARIANT',
