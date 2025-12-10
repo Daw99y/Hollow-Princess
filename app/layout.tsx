@@ -5,6 +5,11 @@ import './globals.css';
 import CapsuleHeader from './components/CapsuleHeader';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
+export const metadata: Metadata = {
+  title: 'Hollow Princess - Endless',
+  description: 'High-fidelity digital interface for outfits and garments.',
+};
+
 const unifrakturMaguntia = UnifrakturMaguntia({
   variable: '--font-gothic',
   subsets: ['latin'],
