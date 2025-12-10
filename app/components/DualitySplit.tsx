@@ -3,38 +3,55 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 
 const SPRING_TRANSITION = {
   type: 'spring',
-  stiffness: 220,
-  damping: 30,
+  stiffness: 120,
+  damping: 25,
+  mass: 1.2,
 };
 
 const OUTFITS = [
   {
     id: 'patch',
     side: 'left' as const,
-    title: 'Benediction',
+    title: 'Anathema',
     codeNum: '01 // PATCH',
     image: '/images/outfitsandgarments/patch-outfit-transp.png',
-    info: {
-      title: 'Patchwork Shell',
-      code: 'P-S-01-V2',
-      spec: '3L Waterproof',
-      details: 'Asymmetric Cut',
+    narrative: {
+      header: 'ANATHEMA // STASIS PROTOCOL',
+      subHeader: 'SUBJECT: THE "PATCH" SYSTEM',
+      body: 'Designed for the handling and transport of the Endless serum. The "Patch" system prioritizes utilitarian endurance for bodies suspended in time. The "cellular" mesh underlay allows for ventilation, while distressed laddering mimics the natural decay the serum prevents.',
+      techLog: [
+        {
+          label: 'MODULAR',
+          value: 'Oversized bellows pockets for serum vial security.',
+        },
+        {
+          label: 'SHIELDING',
+          value: 'Asymmetric raw-hem paneling for core protection.',
+        },
+      ],
     },
   },
   {
     id: '5050s',
     side: 'right' as const,
-    title: 'Anathema',
+    title: 'Benediction',
     codeNum: '02 // 5050S',
-    image: '/images/outfitsandgarments/5050-outfit-transp.png',
-    info: {
-      title: '50/50 Split Shell',
-      code: 'S-50-02-V1',
-      spec: 'Dual Texture',
-      details: 'Modular Zip',
+    image: '/images/outfitsandgarments/5050-outfit-transp-v2.png',
+    narrative: {
+      header: 'BENEDICTION // FLUID STATE',
+      subHeader: 'SUBJECT: THE "5050" WAVE VARIANT',
+      body: 'A visual study of the Endless serum entering the bloodstream. The "5050S" silhouette rejects linear structure for organic fluidity. The bi-tonal split represents the threshold between the aging mortal self and the preserved synthetic eternal.',
+      techLog: [
+        { label: 'GEOMETRY', value: 'Sinusoidal "Wave" panel cutting.' },
+        {
+          label: 'TEXTURE',
+          value: '3D "scale" dimensional articulation on lower chassis.',
+        },
+      ],
     },
   },
 ];
@@ -45,6 +62,7 @@ function ParallaxCard({
   hoveredSide,
   setHoveredSide,
   activeInfoId,
+  setActiveInfoId,
   onInfoClick,
   onClose,
 }: {
@@ -52,17 +70,25 @@ function ParallaxCard({
   hoveredSide: 'left' | 'right' | null;
   setHoveredSide: (side: 'left' | 'right' | null) => void;
   activeInfoId: string | null;
+  setActiveInfoId: (id: string | null) => void;
   onInfoClick: (e: React.MouseEvent, id: string) => void;
   onClose: (e?: React.MouseEvent) => void;
 }) {
   return (
     <motion.div
       layout
-      onMouseEnter={() => setHoveredSide(outfit.side)}
-      onMouseLeave={() => setHoveredSide(null)}
+      onMouseEnter={() => {
+        setHoveredSide(outfit.side);
+        setActiveInfoId(outfit.id);
+      }}
+      onMouseLeave={() => {
+        setHoveredSide(null);
+        setActiveInfoId(null);
+      }}
       className="group relative h-full cursor-pointer overflow-hidden rounded-[40px] border border-neutral-200 bg-white shadow-sm transition-all duration-700 ease-[0.22,1,0.36,1]"
       animate={{
-        flex: hoveredSide === outfit.side ? 2 : hoveredSide === null ? 1 : 1,
+        flex:
+          hoveredSide === outfit.side || activeInfoId === outfit.id ? 1.8 : 1,
       }}
       transition={SPRING_TRANSITION}
     >
@@ -73,19 +99,19 @@ function ParallaxCard({
               className="text-center font-sans text-5xl leading-none font-black tracking-tighter text-neutral-200 uppercase md:text-7xl lg:text-8xl"
               animate={{
                 scale:
-                  hoveredSide === outfit.side
+                  hoveredSide === outfit.side || activeInfoId === outfit.id
                     ? 1
                     : hoveredSide === null
                       ? 1
                       : 0.6,
                 opacity:
-                  hoveredSide === outfit.side
+                  hoveredSide === outfit.side || activeInfoId === outfit.id
                     ? 1
                     : hoveredSide === null
                       ? 1
                       : 0.5,
                 color:
-                  hoveredSide === outfit.side
+                  hoveredSide === outfit.side || activeInfoId === outfit.id
                     ? 'rgba(0,0,0,0.1)'
                     : 'rgb(229,229,229)',
               }}
@@ -118,65 +144,60 @@ function ParallaxCard({
           <AnimatePresence>
             {activeInfoId === outfit.id && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.3 }}
-                className={`absolute bottom-8 z-50 w-auto ${
-                  outfit.side === 'right' ? 'right-8' : 'left-8'
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className={`absolute bottom-6 z-50 w-full max-w-md ${
+                  outfit.side === 'right'
+                    ? 'right-6 md:right-auto md:left-6'
+                    : 'left-6'
                 }`}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div
-                  className={`relative space-y-4 rounded-lg border border-neutral-100 bg-white/90 p-6 shadow-xl backdrop-blur-md ${
-                    outfit.side === 'right' ? 'text-right' : ''
-                  }`}
-                >
-                  {/* Reuse Close Icon */}
+                {/* GLASS NARRATIVE CARD (LIGHT MODE) */}
+                <div className="relative overflow-hidden rounded-[24px] border border-black/[0.04] bg-white/85 p-6 shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] backdrop-blur-xl">
+                  {/* Subtle Inner Highlight */}
+                  <div className="pointer-events-none absolute inset-0 rounded-[24px] ring-1 ring-white/50 ring-inset" />
+
                   <button
                     onClick={onClose}
-                    className="absolute -top-3 -right-3 flex h-6 w-6 items-center justify-center rounded-full bg-black text-white shadow-md"
+                    className="group absolute top-4 right-4 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-neutral-500 transition-colors hover:bg-black/10 hover:text-black"
                   >
-                    ×
+                    <X size={14} strokeWidth={2.5} />
                   </button>
 
-                  <div className="space-y-1">
-                    <div className="font-mono text-[10px] tracking-widest text-neutral-500 uppercase">
-                      Title
-                    </div>
-                    <div className="font-geist-sans text-2xl font-bold tracking-tight text-neutral-900 uppercase">
-                      {outfit.info.title}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="font-mono text-[10px] tracking-widest text-neutral-500 uppercase">
-                      Code
-                    </div>
-                    <div className="font-mono text-sm text-neutral-700 uppercase">
-                      {outfit.info.code}
-                    </div>
-                  </div>
-                  <div className="h-px w-full bg-neutral-200"></div>
-                  <div
-                    className={`flex space-x-8 ${
-                      outfit.side === 'right' ? 'justify-end' : ''
-                    }`}
-                  >
+                  <div className="relative space-y-6 text-left">
+                    {/* Headers */}
                     <div className="space-y-1">
+                      <h3 className="animate-pulse font-sans text-xs font-bold tracking-[0.15em] text-neutral-900 uppercase">
+                        {outfit.narrative.header}
+                      </h3>
                       <div className="font-mono text-[10px] tracking-widest text-neutral-500 uppercase">
-                        Spec
-                      </div>
-                      <div className="font-mono text-xs text-neutral-700">
-                        {outfit.info.spec}
+                        {outfit.narrative.subHeader}
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <div className="font-mono text-[10px] tracking-widest text-neutral-500 uppercase">
-                        Details
-                      </div>
-                      <div className="font-mono text-xs text-neutral-700">
-                        {outfit.info.details}
-                      </div>
+
+                    {/* Narrative Body */}
+                    <p className="font-sans text-sm leading-relaxed font-medium text-neutral-700">
+                      {outfit.narrative.body}
+                    </p>
+
+                    {/* Technical Log */}
+                    <div className="space-y-2 border-t border-black/[0.06] pt-4">
+                      {outfit.narrative.techLog.map((log, i) => (
+                        <div
+                          key={i}
+                          className="flex flex-col gap-1 text-[11px] font-medium sm:flex-row sm:gap-2"
+                        >
+                          <span className="shrink-0 font-mono text-neutral-400 uppercase">
+                            {log.label}:
+                          </span>
+                          <span className="font-mono text-neutral-600">
+                            {log.value}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -211,6 +232,7 @@ export default function DualitySplit({
   const handleClose = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     setActiveInfoId(null);
+    setHoveredSide(null); // Force collapse
   };
 
   return (
@@ -221,10 +243,10 @@ export default function DualitySplit({
       data-segment-type="content"
       className="relative z-10 flex h-[80vh] w-full flex-col md:p-6"
     >
-      {/* Click-outside backdrop */}
+      {/* Click-outside backdrop (Mobile Only) */}
       {activeInfoId && (
         <div
-          className="fixed inset-0 z-40 bg-transparent"
+          className="fixed inset-0 z-40 bg-transparent md:hidden"
           onClick={handleClose}
         />
       )}
@@ -238,6 +260,7 @@ export default function DualitySplit({
             hoveredSide={hoveredSide}
             setHoveredSide={setHoveredSide}
             activeInfoId={activeInfoId}
+            setActiveInfoId={setActiveInfoId}
             onInfoClick={handleInfoClick}
             onClose={handleClose}
           />
@@ -286,55 +309,45 @@ export default function DualitySplit({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute right-6 bottom-6 left-6 z-50"
+                    className="absolute right-4 bottom-4 left-4 z-50"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div className="relative space-y-4 rounded-lg border border-neutral-100 bg-white/90 p-6 shadow-xl backdrop-blur-md">
-                      {/* Reuse Close Icon */}
+                    {/* MOBILE CARD VERSION (LIGHT MODE) */}
+                    <div className="relative overflow-hidden rounded-[24px] border border-black/[0.04] bg-white/90 p-5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] backdrop-blur-xl">
                       <button
                         onClick={handleClose}
-                        className="absolute -top-3 -right-3 flex h-6 w-6 items-center justify-center rounded-full bg-black text-white shadow-md"
+                        className="group absolute top-4 right-4 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-neutral-500 transition-colors hover:bg-black/10 hover:text-black"
                       >
-                        ×
+                        <X size={14} strokeWidth={2.5} />
                       </button>
 
-                      <div className="flex items-start justify-between">
+                      <div className="relative space-y-4 text-left">
                         <div className="space-y-1">
-                          <div className="font-mono text-[10px] tracking-widest text-neutral-500 uppercase">
-                            Title
-                          </div>
-                          <div className="font-geist-sans text-xl font-bold tracking-tight text-neutral-900 uppercase">
-                            {outfit.info.title}
-                          </div>
-                        </div>
-                        <div className="space-y-1 text-right">
-                          <div className="font-mono text-[10px] tracking-widest text-neutral-500 uppercase">
-                            Code
-                          </div>
-                          <div className="font-mono text-xs text-neutral-700 uppercase">
-                            {outfit.info.code}
+                          <h3 className="font-sans text-[10px] font-bold tracking-[0.15em] text-neutral-900 uppercase">
+                            {outfit.narrative.header}
+                          </h3>
+                          <div className="font-mono text-[9px] tracking-widest text-neutral-500 uppercase">
+                            {outfit.narrative.subHeader}
                           </div>
                         </div>
-                      </div>
 
-                      <div className="h-px w-full bg-neutral-200"></div>
-
-                      <div className="flex justify-between">
-                        <div className="space-y-1">
-                          <div className="font-mono text-[10px] tracking-widest text-neutral-500 uppercase">
-                            Spec
-                          </div>
-                          <div className="font-mono text-xs text-neutral-700">
-                            {outfit.info.spec}
-                          </div>
-                        </div>
-                        <div className="space-y-1 text-right">
-                          <div className="font-mono text-[10px] tracking-widest text-neutral-500 uppercase">
-                            Details
-                          </div>
-                          <div className="font-mono text-xs text-neutral-700">
-                            {outfit.info.details}
-                          </div>
+                        <p className="font-sans text-xs leading-relaxed font-medium text-neutral-700">
+                          {outfit.narrative.body}
+                        </p>
+                        <div className="space-y-2 border-t border-black/[0.06] pt-3">
+                          {outfit.narrative.techLog.map((log, i) => (
+                            <div
+                              key={i}
+                              className="flex flex-col gap-0 text-[10px] sm:flex-row sm:gap-2"
+                            >
+                              <span className="shrink-0 font-mono text-neutral-400 uppercase">
+                                {log.label}:
+                              </span>
+                              <span className="font-mono text-neutral-600">
+                                {log.value}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>

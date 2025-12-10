@@ -59,17 +59,17 @@ export default function LocationList({
       data-section={dataSection}
       data-nav-group={navIndex}
       data-segment-type="content"
-      className="relative z-10 flex h-[80vh] w-full items-center justify-center p-8"
+      className="relative z-10 flex h-[80vh] w-full items-center justify-center p-6 md:p-6"
     >
       {/* 
         Floating Data Slate Container:
         - max-w-[95vw]
-        - rounded-[48px]
-        - p-8
+        - rounded-[40px]
+        - p-4
         - bg-zinc-50 (or subtle glass)
       */}
-      <div className="w-full max-w-[95vw] rounded-[48px] border border-neutral-200 bg-white p-4 shadow-sm">
-        <div className="flex w-full flex-col rounded-[32px] bg-zinc-50 p-8">
+      <div className="h-full w-full max-w-[95vw] rounded-[40px] border border-neutral-200 bg-white p-4 shadow-sm">
+        <div className="flex h-full w-full flex-col justify-between rounded-[32px] bg-zinc-50 p-6">
           {LOCATIONS.map((loc, index) => (
             <motion.div
               key={loc.city}
@@ -82,7 +82,7 @@ export default function LocationList({
                 ease: [0.22, 1, 0.36, 1],
               }}
               onClick={() => handleCityClick(loc.city)}
-              className="group relative flex w-full cursor-pointer items-center justify-between border-b border-black/10 py-6 transition-colors duration-300 last:border-0 hover:rounded-2xl hover:bg-white hover:px-6 hover:shadow-sm"
+              className="group relative flex w-full cursor-pointer items-center justify-between border-b border-black/10 py-2 transition-colors duration-300 last:border-0 hover:rounded-2xl hover:bg-white hover:px-6 hover:shadow-sm md:py-4"
             >
               {/* Left: Index & City Name */}
               <div className="flex items-baseline space-x-6 md:space-x-12">
@@ -90,7 +90,7 @@ export default function LocationList({
                   {(index + 1).toString().padStart(2, '0')}
                 </span>
                 <h3
-                  className="font-sans text-4xl font-black tracking-tighter text-transparent transition-all duration-300 group-hover:text-black md:text-8xl lg:text-9xl"
+                  className="font-sans text-4xl font-black tracking-tighter text-transparent transition-all duration-300 group-hover:text-black md:text-7xl lg:text-8xl"
                   style={{
                     WebkitTextStroke: '1px black',
                   }}
