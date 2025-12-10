@@ -16,6 +16,7 @@ const DualitySplit = dynamic(() => import('./components/DualitySplit'));
 const LocationList = dynamic(() => import('./components/LocationList'));
 const ProductRack = dynamic(() => import('./components/ProductRack'));
 const CartModal = dynamic(() => import('./components/CartModal'));
+const FooterLegal = dynamic(() => import('./components/FooterLegal'));
 
 export type CartItem = {
   id: string; // unique ID for cart entry (e.g. timestamp)
@@ -146,6 +147,7 @@ export default function Home() {
 
       {/* Bottom navigation */}
       <BottomNav activeIndex={activeIndex} onNavigate={handleNavSelect} />
+      <FooterLegal />
 
       {/* Scrollable sections container (above vignette) */}
       <div className="relative z-20">
