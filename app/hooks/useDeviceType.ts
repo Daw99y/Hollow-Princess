@@ -6,8 +6,12 @@ import { useEffect, useState } from 'react';
  * Returns true when viewport width is <= breakpoint (default 768px).
  * Uses matchMedia and listens for changes; safe for SSR (defaults to false).
  */
-export function useDeviceType(breakpointPx: number = 768): boolean {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+/**
+ * Core hook to track device type state with readiness flag.
+ * Returns { isMobile, isReady } to handle hydration/loading states.
+ */
+export function useDeviceTypeState(breakpointPx: number = 768) {
+  const [state, setState] = useState({ isMobile: false, isReady: false });
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) {
@@ -17,63 +21,9 @@ export function useDeviceType(breakpointPx: number = 768): boolean {
     const query = `(max-width: ${breakpointPx}px)`;
     const media = window.matchMedia(query);
 
-    const update = () => setIsMobile(media.matches);
+    const update = () => setState({ isMobile: media.matches, isReady: true });
     update();
 
-    if (typeof media.addEventListener === 'function') {
-      media.addEventListener('change', update);
-      return () => media.removeEventListener('change', update);
-    }
-
-    // Fallback for older browsers (deprecated API)
-    if (typeof (media as any).addListener === 'function') {
-      (media as any).addListener(update);
-      return () => (media as any).removeListener?.(update);
-    }
-    return;
-  }, [breakpointPx]);
-
-  return isMobile;
-}
-
-export default function useIsMobile(breakpointPx?: number): boolean {
-  return useDeviceType(breakpointPx);
-}
-
-/**
- * Returns true when viewport width is <= 1024px (mobile + tablet).
- * Useful for applying mobile/tablet-specific behavior.
- */
-export function useIsMobileOrTablet(): boolean {
-  return useDeviceType(1024);
-}
-
-/**
- * Returns true when viewport width is <= breakpoint.
- * Initializes synchronously on the client to avoid hydration mismatch delay.
- * WARNING: ONLY USE IN COMPONENTS WITH ssr: false (Client-only).
- */
-export function useClientDeviceType(breakpointPx: number = 768): boolean {
-  // Initialize state based on window presence to avoid hydration mismatch on server
-  // But for client-only components, this will be correct immediately
-  const [isMobile, setIsMobile] = useState<boolean>(() => {
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia(`(max-width: ${breakpointPx}px)`).matches;
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) {
-      return;
-    }
-
-    const query = `(max-width: ${breakpointPx}px)`;
-    const media = window.matchMedia(query);
-
-    const update = () => setIsMobile(media.matches);
-
-    // Initial check is already done in state initializer, but listener is needed for resizes
     if (typeof media.addEventListener === 'function') {
       media.addEventListener('change', update);
       return () => media.removeEventListener('change', update);
@@ -84,16 +34,35 @@ export function useClientDeviceType(breakpointPx: number = 768): boolean {
       (media as any).addListener(update);
       return () => (media as any).removeListener?.(update);
     }
-    return;
   }, [breakpointPx]);
 
-  return isMobile;
+  return state;
 }
 
 /**
- * Client-only version of useIsMobileOrTablet.
- * WARNING: ONLY USE IN COMPONENTS WITH ssr: false.
+ * Legacy hook returning boolean (isMobile).
+ * Defaults to false (Desktop) during SSR/Hydration.
  */
-export function useClientIsMobileOrTablet(): boolean {
-  return useClientDeviceType(1024);
+export function useDeviceType(breakpointPx: number = 768): boolean {
+  const { isMobile } = useDeviceTypeState(breakpointPx);
+  return isMobile;
+}
+
+export default function useIsMobile(breakpointPx?: number): boolean {
+  return useDeviceType(breakpointPx);
+}
+
+/**
+ * Returns true when viewport width is <= 1024px (mobile + tablet).
+ */
+export function useIsMobileOrTablet(): boolean {
+  return useDeviceType(1024);
+}
+
+/**
+ * Enhanced version for components that need to wait for detection
+ * to avoid double-rendering (e.g. 3D scenes).
+ */
+export function useIsMobileOrTabletState() {
+  return useDeviceTypeState(1024);
 }

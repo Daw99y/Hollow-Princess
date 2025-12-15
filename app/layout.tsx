@@ -4,7 +4,6 @@ import localFont from 'next/font/local';
 import './globals.css';
 import CapsuleHeader from './components/CapsuleHeader';
 import LanguageToggle from './components/LanguageToggle';
-import ClientLayout from './components/ClientLayout';
 import { LanguageProvider } from './context/LanguageContext';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -42,12 +41,10 @@ export default function RootLayout({
         className={`${satoshi.variable} ${unifrakturMaguntia.variable} ${tanker.variable} antialiased`}
       >
         <LanguageProvider>
-          <ClientLayout>
-            <CapsuleHeader />
-            <LanguageToggle />
-            {children}
-            <SpeedInsights />
-          </ClientLayout>
+          <CapsuleHeader />
+          <LanguageToggle />
+          {children}
+          <SpeedInsights />
         </LanguageProvider>
       </body>
     </html>

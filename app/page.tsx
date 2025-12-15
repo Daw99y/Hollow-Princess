@@ -82,16 +82,47 @@ export default function Home() {
   const { cameraState, scrollToSection } = useSmoothScroll();
   const { activeIndex } = useActiveSection();
 
-  // const [showLoader, setShowLoader] = useState<boolean>(true); // Removed - handled globally
-  const [splineReady, setSplineReady] = useState<boolean>(false); // Still needed for internal logic? actually no, handled globally now?
-  // Wait, SplineSceneClient needs to work regardless.
-  // Actually, SplineSceneClient dispatches the event.
-  // We can remove: showLoader, hydrated, docLoaded logic from here (it's in ClientLayout)
+  const [showLoader, setShowLoader] = useState<boolean>(true);
+  const [splineReady, setSplineReady] = useState<boolean>(false);
+  const [hydrated, setHydrated] = useState<boolean>(false);
+  const [docLoaded, setDocLoaded] = useState<boolean>(false);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Removed redundant effects for hydration, window load, spline:ready (handled in ClientLayout)
-  // Removed scroll lock (handled in ClientLayout)
+  // Mark hydration
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  // Listen for window load and spline readiness
+  useEffect(() => {
+    const handleLoad = () => setDocLoaded(true);
+    const handleSplineReady = () => setSplineReady(true);
+
+    if (document.readyState === 'complete') {
+      setDocLoaded(true);
+    } else {
+      window.addEventListener('load', handleLoad, { once: true });
+    }
+    window.addEventListener('spline:ready', handleSplineReady, { once: true });
+
+    return () => {
+      window.removeEventListener('load', handleLoad as any);
+      window.removeEventListener('spline:ready', handleSplineReady as any);
+    };
+  }, []);
+
+  // Lock scroll while loader shown; restore after fade completes via onFinish
+  useEffect(() => {
+    if (showLoader) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [showLoader]);
+
+  const canDismiss = splineReady && (hydrated || docLoaded);
 
   const handleNavSelect = (index: number) => {
     scrollToSection(index, { targetType: 'content', center: true });
@@ -133,7 +164,6 @@ export default function Home() {
               dataSection={segment.spline.dataSection}
               navIndex={index}
             />
-            {/* ... rest of content ... */}
             {(segment.content as any).type === 'duality' ? (
               <MagneticSection>
                 <DualitySplit
@@ -182,7 +212,16 @@ export default function Home() {
         <div aria-hidden="true" className="h-screen w-full bg-transparent" />
       </div>
 
-      {/* LoadingScreen removed - handled globally in ClientLayout */}
+      {/* Loading overlay (covers all until ready, then fades out and unmounts) */}
+      {showLoader && (
+        <LoadingScreen
+          done={canDismiss}
+          onFinish={() => {
+            setShowLoader(false);
+            document.body.style.overflow = '';
+          }}
+        />
+      )}
     </main>
   );
 }
