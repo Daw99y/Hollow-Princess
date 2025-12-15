@@ -4,7 +4,10 @@ import localFont from 'next/font/local';
 import './globals.css';
 import CapsuleHeader from './components/CapsuleHeader';
 import LanguageToggle from './components/LanguageToggle';
+import CartTrigger from './components/CartTrigger';
+import CartModal from './components/CartModal';
 import { LanguageProvider } from './context/LanguageContext';
+import { CartProvider } from './context/CartContext';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
@@ -41,10 +44,14 @@ export default function RootLayout({
         className={`${satoshi.variable} ${unifrakturMaguntia.variable} ${tanker.variable} antialiased`}
       >
         <LanguageProvider>
-          <CapsuleHeader />
-          <LanguageToggle />
-          {children}
-          <SpeedInsights />
+          <CartProvider>
+            <CapsuleHeader />
+            <LanguageToggle />
+            <CartTrigger />
+            <CartModal />
+            {children}
+            <SpeedInsights />
+          </CartProvider>
         </LanguageProvider>
       </body>
     </html>

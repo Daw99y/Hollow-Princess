@@ -31,15 +31,7 @@ const ProductRack = dynamic(() => import('./components/ProductRack'));
 const CartModal = dynamic(() => import('./components/CartModal'));
 const FooterLegal = dynamic(() => import('./components/FooterLegal'));
 
-export type CartItem = {
-  id: string; // unique ID for cart entry (e.g. timestamp)
-  productId: string;
-  name: string;
-  code: string;
-  price: number;
-  size: string;
-  image: string;
-};
+// CartItem type moved to context
 
 const TIMELINE_SEGMENTS = [
   {
@@ -94,8 +86,6 @@ export default function Home() {
   const [splineReady, setSplineReady] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [docLoaded, setDocLoaded] = useState<boolean>(false);
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   // Mark hydration
   useEffect(() => {
@@ -136,22 +126,8 @@ export default function Home() {
     scrollToSection(index, { targetType: 'content', center: true });
   };
 
-  const handleOpenCart = () => setIsCartOpen(true);
-  const handleCloseCart = () => setIsCartOpen(false);
-
-  const handleAddToCart = (item: Omit<CartItem, 'id'>) => {
-    const newItem = { ...item, id: Date.now().toString() };
-    setCartItems((prev) => [...prev, newItem]);
-  };
-
   return (
     <main className="relative">
-      <CartModal
-        isOpen={isCartOpen}
-        onClose={handleCloseCart}
-        items={cartItems}
-      />
-
       {/* Fixed Spline canvas - full viewport */}
       <SplineSceneClient cameraState={cameraState} />
 
@@ -194,9 +170,9 @@ export default function Home() {
                   id={segment.content.id}
                   dataSection={segment.content.dataSection}
                   navIndex={index}
-                  onOpenCart={handleOpenCart}
-                  cartCount={cartItems.length}
-                  onAddToCart={handleAddToCart}
+                  onOpenCart={() => {}} // No-op, managed globally
+                  cartCount={0} // Managed globally
+                  onAddToCart={() => {}} // No-op, managed globally
                 />
               </MagneticSection>
             ) : (

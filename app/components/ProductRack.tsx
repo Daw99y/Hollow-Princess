@@ -106,6 +106,8 @@ interface ProductRackProps {
   }) => void;
 }
 
+import { useCart } from '../context/CartContext';
+
 export default function ProductRack({
   id,
   dataSection,
@@ -115,6 +117,7 @@ export default function ProductRack({
   onAddToCart,
 }: ProductRackProps) {
   const { t } = useLanguage();
+  const { addToCart: contextAddToCart } = useCart();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isAdded, setIsAdded] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>(
@@ -136,16 +139,14 @@ export default function ProductRack({
     // Default size to 'M' if not selected
     const size = selectedSizes[product.id] || 'M';
 
-    if (onAddToCart) {
-      onAddToCart({
-        productId: product.id,
-        name: product.name,
-        code: product.code,
-        price: product.price,
-        size: size,
-        image: product.image,
-      });
-    }
+    contextAddToCart({
+      productId: product.id,
+      name: product.name,
+      code: product.code,
+      price: product.price,
+      size: size,
+      image: product.image,
+    });
 
     // Trigger animation
     setIsAdded(true);
@@ -161,17 +162,6 @@ export default function ProductRack({
       // Removed bg-white
       className="relative z-30 flex h-[80vh] min-h-[80vh] w-full flex-col md:p-6"
     >
-      {/* Absolute "System Counter" Cart - Pinned Top Right */}
-      <button
-        onClick={onOpenCart}
-        className={cx(
-          'absolute top-10 left-1/2 z-50 flex -translate-x-1/2 animate-pulse cursor-pointer flex-col items-center font-mono text-[10px] font-bold tracking-[0.2em] text-black uppercase hover:text-black/70',
-          isAdded ? 'scale-110' : ''
-        )}
-      >
-        <span>{t('cart.title')}</span>
-      </button>
-
       {/* DESKTOP ACCORDION (Hidden on Mobile) */}
       <div className="hidden h-full w-full gap-4 md:flex">
         {PRODUCTS.map((product, index) => {
