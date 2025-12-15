@@ -4,14 +4,14 @@ import { useEffect, useRef } from 'react';
 import Spline from '@splinetool/react-spline';
 import { Application } from '@splinetool/runtime';
 import { CameraState } from '../types/camera';
-import { useIsMobileOrTabletState } from '../hooks/useDeviceType';
+import { useIsMobileOrTablet } from '../hooks/useDeviceType';
 
 interface SplineSceneProps {
   cameraState: CameraState;
 }
 
 export default function SplineScene({ cameraState }: SplineSceneProps) {
-  const { isMobile, isReady } = useIsMobileOrTabletState();
+  const isMobile = useIsMobileOrTablet();
   const sceneUrl = isMobile
     ? 'https://prod.spline.design/jL28RVVYWYZQ48eo/scene.splinecode'
     : 'https://prod.spline.design/iu41ezeHIYG8Uwym/scene.splinecode';
@@ -217,10 +217,6 @@ export default function SplineScene({ cameraState }: SplineSceneProps) {
     return () =>
       document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isMobile]);
-
-  if (!isReady) {
-    return null;
-  }
 
   return (
     <div className="fixed inset-0 z-0">
