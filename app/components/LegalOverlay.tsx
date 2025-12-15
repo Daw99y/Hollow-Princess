@@ -111,6 +111,14 @@ export default function LegalOverlay({
             onClick={onClose}
           />
 
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-12 right-6 z-50 rounded-full p-2 text-white/50 transition-colors hover:bg-white/10 hover:text-white sm:top-16 sm:right-10"
+          >
+            <X size={24} />
+          </button>
+
           {/* Modal Content */}
           <motion.div
             initial={{ scale: 0.95, opacity: 0, y: 10 }}
@@ -121,14 +129,6 @@ export default function LegalOverlay({
             onClick={(e) => e.stopPropagation()}
             data-lenis-prevent
           >
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="fixed top-6 right-6 z-50 p-2 text-white/50 transition-colors hover:text-white"
-            >
-              <X size={24} strokeWidth={1.5} />
-            </button>
-
             <div className="prose prose-invert prose-sm sm:prose-base max-w-none space-y-8 pb-20 text-gray-200">
               {content.split('\n').map((line, i) => {
                 // Handling rudimentary formatting

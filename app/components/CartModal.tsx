@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CartItem {
   id: string;
@@ -23,6 +24,7 @@ export default function CartModal({
   onClose,
   items = [],
 }: CartModalProps) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   const total = items.reduce((sum, item) => sum + item.price, 0);
@@ -49,7 +51,7 @@ export default function CartModal({
           {/* Header */}
           <div className="mb-6 flex items-center justify-between md:mb-8">
             <h2 className="font-geist-sans text-xl font-medium tracking-tight text-white md:text-2xl">
-              My Cart{' '}
+              {t('cart.title')}{' '}
               <span className="text-white/40">
                 ({items.length.toString().padStart(2, '0')})
               </span>
@@ -58,7 +60,7 @@ export default function CartModal({
               onClick={onClose}
               className="rounded-full border border-white/10 px-4 py-1.5 font-mono text-xs text-white/60 transition-colors hover:bg-white hover:text-black"
             >
-              Close
+              {t('cart.close')}
             </button>
           </div>
 
@@ -66,7 +68,7 @@ export default function CartModal({
           <div className="flex-1 space-y-3 overflow-y-auto pr-2 md:space-y-4">
             {items.length === 0 ? (
               <div className="flex h-full items-center justify-center font-mono text-sm text-white/40">
-                Cart is empty
+                {t('cart.empty')}
               </div>
             ) : (
               items.map((item) => (
@@ -115,16 +117,16 @@ export default function CartModal({
           {/* Summary Info (Hidden on very small screens if needed, or compact) */}
           <div className="space-y-4 pt-4 md:space-y-6">
             <div className="flex justify-between text-sm text-white/60">
-              <span>Subtotal</span>
+              <span>{t('cart.subtotal')}</span>
               <span>${total.toFixed(2)}</span>
             </div>
             <div className="hidden justify-between text-sm text-white/60 md:flex">
-              <span>Shipping</span>
-              <span>Calc at next step</span>
+              <span>{t('cart.shipping')}</span>
+              <span>{t('cart.calc')}</span>
             </div>
             <div className="h-px w-full bg-white/10"></div>
             <div className="flex justify-between text-lg font-medium text-white">
-              <span>Total</span>
+              <span>{t('cart.total')}</span>
               <span>${total.toFixed(2)}</span>
             </div>
           </div>
@@ -132,10 +134,10 @@ export default function CartModal({
           {/* Buttons (Apple Aesthetic) */}
           <div className="mt-6 space-y-3 md:mt-0">
             <button className="font-geist-sans w-full rounded-full bg-white py-3 text-sm font-medium text-black transition-opacity hover:opacity-90 active:scale-95 md:py-4 md:text-base">
-              Checkout
+              {t('cart.checkout')}
             </button>
             <button className="font-geist-sans flex w-full items-center justify-center gap-2 rounded-full bg-[#1A1A1A] py-3 text-sm font-medium text-white transition-colors hover:bg-[#2A2A2A] active:scale-95 md:py-4 md:text-base">
-              <span className="text-xl"></span> Pay
+              <span className="text-xl"></span> {t('cart.pay')}
             </button>
           </div>
         </div>

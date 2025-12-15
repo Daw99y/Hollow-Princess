@@ -11,6 +11,11 @@ import ContentSection from './components/ContentSection';
 import Link from 'next/link';
 import BottomNav from './components/BottomNav';
 import dynamic from 'next/dynamic';
+import ScrollyTellingSequence from './components/ScrollyTellingSequence';
+import ScrollyTellingLocations from './components/ScrollyTellingLocations';
+import ScrollyTellingPurchase from './components/ScrollyTellingPurchase';
+import ScrollyTellingOutro from './components/ScrollyTellingOutro';
+import MagneticSection from './components/MagneticSection';
 
 const DualitySplit = dynamic(() => import('./components/DualitySplit'));
 const LocationList = dynamic(() => import('./components/LocationList'));
@@ -151,6 +156,7 @@ export default function Home() {
 
       {/* Scrollable sections container (above vignette) */}
       <div className="relative z-20">
+        <ScrollyTellingSequence />
         {TIMELINE_SEGMENTS.map((segment, index) => (
           <Fragment key={segment.spline.id}>
             <SplineSegment
@@ -159,26 +165,32 @@ export default function Home() {
               navIndex={index}
             />
             {(segment.content as any).type === 'duality' ? (
-              <DualitySplit
-                id={segment.content.id}
-                dataSection={segment.content.dataSection}
-                navIndex={index}
-              />
+              <MagneticSection>
+                <DualitySplit
+                  id={segment.content.id}
+                  dataSection={segment.content.dataSection}
+                  navIndex={index}
+                />
+              </MagneticSection>
             ) : (segment.content as any).type === 'location_list' ? (
-              <LocationList
-                id={segment.content.id}
-                dataSection={segment.content.dataSection}
-                navIndex={index}
-              />
+              <MagneticSection>
+                <LocationList
+                  id={segment.content.id}
+                  dataSection={segment.content.dataSection}
+                  navIndex={index}
+                />
+              </MagneticSection>
             ) : (segment.content as any).type === 'product_rack' ? (
-              <ProductRack
-                id={segment.content.id}
-                dataSection={segment.content.dataSection}
-                navIndex={index}
-                onOpenCart={handleOpenCart}
-                cartCount={cartItems.length}
-                onAddToCart={handleAddToCart}
-              />
+              <MagneticSection>
+                <ProductRack
+                  id={segment.content.id}
+                  dataSection={segment.content.dataSection}
+                  navIndex={index}
+                  onOpenCart={handleOpenCart}
+                  cartCount={cartItems.length}
+                  onAddToCart={handleAddToCart}
+                />
+              </MagneticSection>
             ) : (
               <ContentSection
                 id={segment.content.id}
@@ -189,6 +201,12 @@ export default function Home() {
                 children={segment.content.copy}
               />
             )}
+            {/* Inject Location ScrollyTelling after Outfits (Index 0) */}
+            {index === 0 && <ScrollyTellingLocations />}
+            {/* Inject Purchase ScrollyTelling after Locations (Index 1) */}
+            {index === 1 && <ScrollyTellingPurchase />}
+            {/* Inject Outro ScrollyTelling after Purchase (Index 2) */}
+            {index === 2 && <ScrollyTellingOutro />}
           </Fragment>
         ))}
         <div aria-hidden="true" className="h-screen w-full bg-transparent" />

@@ -1,11 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 
 const cx = (...classes: (string | undefined | null | false)[]) =>
   classes.filter(Boolean).join(' ');
+
+function StockCounter({ current, total }: { current: number; total: number }) {
+  const { t } = useLanguage();
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+
+  useEffect(() => {
+    const controls = animate(count, current, {
+      duration: 1.5,
+      ease: 'circOut',
+    });
+    return controls.stop;
+  }, [current]);
+
+  return (
+    <div className="flex items-center space-x-2 font-mono text-[10px] tracking-widest uppercase">
+      <div
+        className={`h-1.5 w-1.5 rounded-full ${current === 0 ? 'bg-red-500' : 'bg-emerald-500'} animate-pulse`}
+      />
+      <span className={current === 0 ? 'text-red-500' : 'text-neutral-500'}>
+        {current === 0 ? (
+          t('product.soldOut')
+        ) : (
+          <>
+            <motion.span>{rounded}</motion.span> / {total}{' '}
+            {t('product.remaining')}
+          </>
+        )}
+      </span>
+    </div>
+  );
+}
 
 const SIZES = ['S', 'M', 'L', 'XL'];
 
@@ -16,6 +49,8 @@ const PRODUCTS = [
     code: 'G-V1',
     price: 420.0,
     image: '/images/outfitsandgarments/dark grey vest.png',
+    stock: 126,
+    total: 500,
   },
   {
     id: 'p2',
@@ -23,6 +58,8 @@ const PRODUCTS = [
     code: 'BLK',
     price: 350.0,
     image: '/images/outfitsandgarments/sweater.png',
+    stock: 142,
+    total: 500,
   },
   {
     id: 'p3',
@@ -30,6 +67,8 @@ const PRODUCTS = [
     code: 'V1',
     price: 480.0,
     image: '/images/outfitsandgarments/patch pants.png',
+    stock: 98,
+    total: 500,
   },
   {
     id: 'p4',
@@ -37,6 +76,8 @@ const PRODUCTS = [
     code: 'L-G',
     price: 420.0,
     image: '/images/outfitsandgarments/grey vest.png',
+    stock: 0,
+    total: 500,
   },
   {
     id: 'p5',
@@ -44,6 +85,8 @@ const PRODUCTS = [
     code: '50-50',
     price: 460.0,
     image: '/images/outfitsandgarments/5050 pants.png',
+    stock: 115,
+    total: 500,
   },
 ];
 
@@ -71,6 +114,7 @@ export default function ProductRack({
   cartCount = 0,
   onAddToCart,
 }: ProductRackProps) {
+  const { t } = useLanguage();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isAdded, setIsAdded] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>(
@@ -125,7 +169,7 @@ export default function ProductRack({
           isAdded ? 'scale-110' : ''
         )}
       >
-        <span>CART</span>
+        <span>{t('cart.title')}</span>
       </button>
 
       {/* DESKTOP ACCORDION (Hidden on Mobile) */}
@@ -170,8 +214,13 @@ export default function ProductRack({
                     isHovered ? 'opacity-0 delay-0' : 'opacity-100 delay-300'
                   )}
                 >
-                  <span className="block rotate-90 font-mono text-xs font-bold tracking-[0.2em] text-neutral-400">
-                    {product.name.split('-')[0]} // {product.id}
+                  <span className="block rotate-90 font-mono text-xs font-bold tracking-[0.2em] text-neutral-400 uppercase">
+                    {
+                      t(
+                        `product.${product.id === 'p1' ? 'asym' : product.id === 'p2' ? 'knit' : product.id === 'p3' ? 'trouser' : product.id === 'p4' ? 'wave' : 'bitonal'}`
+                      ).split('-')[0]
+                    }{' '}
+                    // {product.id}
                   </span>
                 </div>
 
@@ -185,11 +234,19 @@ export default function ProductRack({
                   <div className="flex flex-col space-y-3 rounded-xl border border-white/20 bg-white/90 p-5 shadow-xl backdrop-blur-md">
                     <div className="flex flex-col border-l-2 border-black pl-3">
                       <h3 className="font-geist-sans text-2xl leading-none font-black tracking-tighter uppercase">
-                        {product.name}
+                        {t(
+                          `product.${product.id === 'p1' ? 'asym' : product.id === 'p2' ? 'knit' : product.id === 'p3' ? 'trouser' : product.id === 'p4' ? 'wave' : 'bitonal'}`
+                        )}
                       </h3>
                       <span className="mt-1 font-mono text-xs text-neutral-500">
                         ${product.price.toFixed(2)} USD
                       </span>
+                      <div className="mt-2">
+                        <StockCounter
+                          current={product.stock}
+                          total={product.total}
+                        />
+                      </div>
                     </div>
 
                     {/* Size Selector */}
@@ -217,10 +274,18 @@ export default function ProductRack({
                     </div>
 
                     <button
+                      disabled={product.stock === 0}
                       onClick={(e) => addToCart(e, product)}
-                      className="w-full rounded-md bg-black py-3 font-mono text-xs text-white transition-transform hover:bg-neutral-800 active:scale-95"
+                      className={cx(
+                        'w-full rounded-md py-3 font-mono text-xs transition-transform active:scale-95',
+                        product.stock === 0
+                          ? 'cursor-not-allowed bg-neutral-100 text-neutral-400'
+                          : 'bg-black text-white hover:bg-neutral-800'
+                      )}
                     >
-                      [ + ADD TO CART ]
+                      {product.stock === 0
+                        ? t('product.soldOut')
+                        : `[ + ${t('product.addToCart')} ]`}
                     </button>
                   </div>
                 </div>
@@ -257,12 +322,18 @@ export default function ProductRack({
                     {product.code}
                   </div>
                   <h3 className="font-geist-sans mt-1 text-2xl leading-none font-black tracking-tighter uppercase">
-                    {product.name}
+                    {t(
+                      `product.${product.id === 'p1' ? 'asym' : product.id === 'p2' ? 'knit' : product.id === 'p3' ? 'trouser' : product.id === 'p4' ? 'wave' : 'bitonal'}`
+                    )}
                   </h3>
                 </div>
                 <div className="font-mono text-lg font-bold">
                   ${product.price}
                 </div>
+              </div>
+
+              <div className="mt-2 mb-2">
+                <StockCounter current={product.stock} total={product.total} />
               </div>
 
               {/* Size & Add */}
@@ -289,10 +360,18 @@ export default function ProductRack({
                 </div>
 
                 <button
+                  disabled={product.stock === 0}
                   onClick={(e) => addToCart(e, product)}
-                  className="w-full rounded-md bg-black py-4 font-mono text-xs text-white active:scale-95"
+                  className={cx(
+                    'w-full rounded-md py-4 font-mono text-xs active:scale-95',
+                    product.stock === 0
+                      ? 'cursor-not-allowed bg-neutral-100 text-neutral-400'
+                      : 'bg-black text-white'
+                  )}
                 >
-                  ADD TO CART
+                  {product.stock === 0
+                    ? t('product.soldOut')
+                    : t('product.addToCart')}
                 </button>
               </div>
             </div>
@@ -303,7 +382,7 @@ export default function ProductRack({
       {/* Scroll Indicator */}
       <div className="absolute right-0 -bottom-2 left-0 flex justify-center pb-2 md:hidden">
         <span className="animate-pulse font-mono text-[10px] tracking-[0.2em] text-neutral-400">
-          {'< SWIPE >'}
+          {t('product.swipe')}
         </span>
       </div>
     </section>

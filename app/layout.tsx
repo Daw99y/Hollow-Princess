@@ -3,6 +3,8 @@ import { UnifrakturMaguntia } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 import CapsuleHeader from './components/CapsuleHeader';
+import LanguageToggle from './components/LanguageToggle';
+import { LanguageProvider } from './context/LanguageContext';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
@@ -38,9 +40,12 @@ export default function RootLayout({
       <body
         className={`${satoshi.variable} ${unifrakturMaguntia.variable} ${tanker.variable} antialiased`}
       >
-        <CapsuleHeader />
-        {children}
-        <SpeedInsights />
+        <LanguageProvider>
+          <CapsuleHeader />
+          <LanguageToggle />
+          {children}
+          <SpeedInsights />
+        </LanguageProvider>
       </body>
     </html>
   );

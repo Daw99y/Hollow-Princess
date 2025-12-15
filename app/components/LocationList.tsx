@@ -2,37 +2,38 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 
 const LOCATIONS = [
   {
-    city: 'SEOUL',
+    displayKey: 'location.seoul',
     coords: '37.5665° N / 126.9780° E',
     date: '2024.03.15',
-    status: 'ACTIVE',
+    statusKey: 'location.status.active',
   },
   {
-    city: 'BUSAN',
+    displayKey: 'location.busan',
     coords: '35.1796° N / 129.0756° E',
     date: '2024.04.02',
-    status: 'PENDING',
+    statusKey: 'location.status.pending',
   },
   {
-    city: 'INCHEON',
+    displayKey: 'location.incheon',
     coords: '37.4563° N / 126.7052° E',
     date: '2024.04.20',
-    status: 'PENDING',
+    statusKey: 'location.status.pending',
   },
   {
-    city: 'DAEGU',
+    displayKey: 'location.daegu',
     coords: '35.8714° N / 128.6014° E',
     date: '2024.05.05',
-    status: 'PENDING',
+    statusKey: 'location.status.pending',
   },
   {
-    city: 'JEJU',
+    displayKey: 'location.jeju',
     coords: '33.4996° N / 126.5312° E',
     date: '2024.05.15',
-    status: 'PENDING',
+    statusKey: 'location.status.pending',
   },
 ];
 
@@ -47,6 +48,7 @@ export default function LocationList({
   dataSection,
   navIndex,
 }: LocationListProps) {
+  const { t } = useLanguage();
   const [activeCity, setActiveCity] = useState<string | null>(null);
 
   const handleCityClick = (city: string) => {
@@ -72,7 +74,7 @@ export default function LocationList({
         <div className="flex h-full w-full flex-col justify-between rounded-[32px] bg-zinc-50 p-6">
           {LOCATIONS.map((loc, index) => (
             <motion.div
-              key={loc.city}
+              key={loc.displayKey}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-10%' }}
@@ -81,7 +83,7 @@ export default function LocationList({
                 delay: index * 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              onClick={() => handleCityClick(loc.city)}
+              onClick={() => handleCityClick(t(loc.displayKey))}
               className="group relative flex w-full cursor-pointer items-center justify-between border-b border-black/10 py-2 transition-colors duration-300 last:border-0 hover:rounded-2xl hover:bg-white hover:px-6 hover:shadow-sm md:py-4"
             >
               {/* Left: Index & City Name */}
@@ -95,7 +97,7 @@ export default function LocationList({
                     WebkitTextStroke: '1px black',
                   }}
                 >
-                  {loc.city}
+                  {t(loc.displayKey)}
                 </h3>
               </div>
 
@@ -104,7 +106,7 @@ export default function LocationList({
                 <div className="group-hover:text-black">{loc.coords}</div>
                 <div>{loc.date}</div>
                 <div className="mt-2 text-neutral-400 group-hover:animate-pulse group-hover:text-amber-500">
-                  // {loc.status}
+                  // {t(loc.statusKey)}
                 </div>
               </div>
 
@@ -112,7 +114,7 @@ export default function LocationList({
               <div className="flex flex-col items-end space-y-1 font-mono text-[10px] text-neutral-400 md:hidden">
                 <div
                   className={`transition-all duration-300 ${
-                    activeCity === loc.city
+                    activeCity === t(loc.displayKey)
                       ? 'translate-y-0 opacity-100'
                       : 'hidden -translate-y-2 opacity-0'
                   }`}
@@ -121,12 +123,12 @@ export default function LocationList({
                 </div>
                 <div
                   className={
-                    loc.status === 'PENDING'
+                    loc.statusKey === 'location.status.pending'
                       ? 'animate-pulse text-neutral-500'
                       : ''
                   }
                 >
-                  {loc.status}
+                  {t(loc.statusKey)}
                 </div>
               </div>
             </motion.div>

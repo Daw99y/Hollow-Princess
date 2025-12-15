@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const SPRING_TRANSITION = {
   type: 'spring',
@@ -12,7 +13,7 @@ const SPRING_TRANSITION = {
   mass: 1.2,
 };
 
-const OUTFITS = [
+const OUTFITS_EN = [
   {
     id: 'patch',
     side: 'left' as const,
@@ -22,7 +23,7 @@ const OUTFITS = [
     narrative: {
       header: 'ANATHEMA // STASIS PROTOCOL',
       subHeader: 'SUBJECT: THE "PATCH" SYSTEM',
-      body: 'Designed for the handling and transport of the Endless serum. The "Patch" system prioritizes utilitarian endurance for bodies suspended in time. The "cellular" mesh underlay allows for ventilation, while distressed laddering mimics the natural decay the serum prevents.',
+      body: 'Engineered for serum transport.\nPrioritizes endurance for suspended states.\nCellular mesh ensures ventilation; distressed laddering visualizes the natural decay arrested by the serum.',
       techLog: [
         {
           label: 'MODULAR',
@@ -44,12 +45,56 @@ const OUTFITS = [
     narrative: {
       header: 'BENEDICTION // FLUID STATE',
       subHeader: 'SUBJECT: THE "5050" WAVE VARIANT',
-      body: 'A visual study of the Endless serum entering the bloodstream. The "5050S" silhouette rejects linear structure for organic fluidity. The bi-tonal split represents the threshold between the aging mortal self and the preserved synthetic eternal.',
+      body: 'Visual analysis of serum integration.\nThe 5050S prioritizes organic fluidity over linear structure.\nBi-tonal split defines the threshold between organic mortality and synthetic preservation.',
       techLog: [
         { label: 'GEOMETRY', value: 'Sinusoidal "Wave" panel cutting.' },
         {
           label: 'TEXTURE',
           value: '3D "scale" dimensional articulation on lower chassis.',
+        },
+      ],
+    },
+  },
+];
+
+const OUTFITS_KR = [
+  {
+    id: 'patch',
+    side: 'left' as const,
+    title: '아나테마',
+    codeNum: '01 // PATCH',
+    image: '/images/outfitsandgarments/patch-outfit-transp.png',
+    narrative: {
+      header: '아나테마 // 정지 프로토콜',
+      subHeader: '대상: "패치" 시스템',
+      body: '혈청 운송을 위해 설계됨.\n정지 상태에서의 내구성을 최우선으로 함.\n세포형 메쉬는 통기성을 보장하며, 손상된 사다리꼴 구조는 혈청에 의해 저지된 자연적 부패를 시각화함.',
+      techLog: [
+        {
+          label: '모듈러',
+          value: '혈청 바이알 보안을 위한 오버사이즈 벨로우즈 포켓.',
+        },
+        {
+          label: '방호',
+          value: '코어 보호를 위한 비대칭 컷팅 패널링.',
+        },
+      ],
+    },
+  },
+  {
+    id: '5050s',
+    side: 'right' as const,
+    title: '베네딕션',
+    codeNum: '02 // 5050S',
+    image: '/images/outfitsandgarments/benediction-outfit.png',
+    narrative: {
+      header: '베네딕션 // 유동 상태',
+      subHeader: '대상: "5050" 웨이브 변형',
+      body: '혈청 통합의 시각적 분석.\n5050S는 선형 구조보다 유기적 유동성을 우선시함.\n이중 톤 분할은 유기적 필멸성과 합성 보존 사이의 경계를 정의함.',
+      techLog: [
+        { label: '기하학', value: '사인파 "웨이브" 패널 커팅.' },
+        {
+          label: '텍스처',
+          value: '하단 섀시의 3D "스케일" 차원 관절.',
         },
       ],
     },
@@ -65,14 +110,16 @@ function ParallaxCard({
   setActiveInfoId,
   onInfoClick,
   onClose,
+  t,
 }: {
-  outfit: (typeof OUTFITS)[0];
+  outfit: (typeof OUTFITS_EN)[0];
   hoveredSide: 'left' | 'right' | null;
   setHoveredSide: (side: 'left' | 'right' | null) => void;
   activeInfoId: string | null;
   setActiveInfoId: (id: string | null) => void;
   onInfoClick: (e: React.MouseEvent, id: string) => void;
   onClose: (e?: React.MouseEvent) => void;
+  t: (key: string) => string;
 }) {
   return (
     <motion.div
@@ -125,7 +172,7 @@ function ParallaxCard({
                 outfit.side === 'right' ? 'right-8' : 'left-8'
               }`}
             >
-              INFO
+              {t('product.info')}
             </button>
           </div>
 
@@ -179,7 +226,7 @@ function ParallaxCard({
                     </div>
 
                     {/* Narrative Body */}
-                    <p className="font-sans text-sm leading-relaxed font-medium text-neutral-700">
+                    <p className="font-sans text-sm leading-relaxed font-medium whitespace-pre-line text-neutral-700">
                       {outfit.narrative.body}
                     </p>
 
@@ -221,8 +268,11 @@ export default function DualitySplit({
   dataSection,
   navIndex,
 }: DualitySplitProps) {
+  const { language, t } = useLanguage();
   const [hoveredSide, setHoveredSide] = useState<'left' | 'right' | null>(null);
   const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
+
+  const OUTFITS = language === 'KOR' ? OUTFITS_KR : OUTFITS_EN;
 
   const handleInfoClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -263,6 +313,7 @@ export default function DualitySplit({
             setActiveInfoId={setActiveInfoId}
             onInfoClick={handleInfoClick}
             onClose={handleClose}
+            t={t}
           />
         ))}
       </div>
@@ -284,7 +335,7 @@ export default function DualitySplit({
                   onClick={(e) => handleInfoClick(e, outfit.id)}
                   className="absolute top-6 right-6 z-50 w-fit animate-pulse font-mono text-xs font-bold tracking-widest text-black"
                 >
-                  INFO
+                  {t('product.info')}
                 </button>
               </div>
 
@@ -331,7 +382,7 @@ export default function DualitySplit({
                           </div>
                         </div>
 
-                        <p className="font-sans text-xs leading-relaxed font-medium text-neutral-700">
+                        <p className="font-sans text-xs leading-relaxed font-medium whitespace-pre-line text-neutral-700">
                           {outfit.narrative.body}
                         </p>
                         <div className="space-y-2 border-t border-black/[0.06] pt-3">
@@ -362,7 +413,7 @@ export default function DualitySplit({
       {/* Mobile Swipe Indicator */}
       <div className="absolute right-0 -bottom-2 left-0 flex justify-center pb-2 md:hidden">
         <span className="animate-pulse font-mono text-[10px] tracking-[0.2em] text-neutral-400">
-          {'< SWIPE >'}
+          {t('product.swipe')}
         </span>
       </div>
     </section>

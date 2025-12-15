@@ -50,12 +50,20 @@ type TimelineBand =
     };
 
 const TIMELINE_BANDS: TimelineBand[] = [
-  { type: 'spline', segmentIndex: 0, duration: 0.25 },
-  { type: 'content', duration: 0.1 },
-  { type: 'spline', segmentIndex: 1, duration: 0.25 },
-  { type: 'content', duration: 0.1 },
-  { type: 'spline', segmentIndex: 2, duration: 0.25 },
-  { type: 'content', duration: 0.1 },
+  // New "Scrolly-telling" pinned sequence (Camera stays at start state)
+  { type: 'content', duration: 1.5 },
+  { type: 'spline', segmentIndex: 0, duration: 0.5 },
+  { type: 'content', duration: 0.2 },
+  // New "Scrolly-telling" for Locations (Camera stays at Outfit state)
+  { type: 'content', duration: 1.5 },
+  { type: 'spline', segmentIndex: 1, duration: 0.5 },
+  { type: 'content', duration: 0.2 },
+  // New "Scrolly-telling" for Purchase (Camera stays at Location state)
+  { type: 'content', duration: 1.5 },
+  { type: 'spline', segmentIndex: 2, duration: 0.5 },
+  { type: 'content', duration: 0.2 },
+  // New "Scrolly-telling" Outro (Camera stays at Purchase state)
+  { type: 'content', duration: 1.5 },
 ];
 
 const TIMELINE_TOTAL_LENGTH = TIMELINE_BANDS.reduce(

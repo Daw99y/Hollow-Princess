@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LegalOverlay from './LegalOverlay';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function FooterLegal() {
+  const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
   const [overlayType, setOverlayType] = useState<'privacy' | 'terms' | null>(
     null
@@ -27,7 +29,7 @@ export default function FooterLegal() {
   }, []);
 
   const linkClass =
-    'fixed bottom-8 text-xs sm:text-sm font-sans tracking-widest text-black/40 hover:text-black/100 transition-colors duration-300 uppercase cursor-pointer z-40 select-none';
+    'fixed bottom-2 sm:bottom-8 text-[10px] sm:text-sm font-sans tracking-widest text-black/40 hover:text-black/100 transition-colors duration-300 uppercase cursor-pointer z-40 select-none';
 
   return (
     <>
@@ -43,7 +45,7 @@ export default function FooterLegal() {
               className={`${linkClass} left-8 sm:left-12`}
               onClick={() => setOverlayType('terms')}
             >
-              Terms & Conditions
+              {t('footer.terms')}
             </motion.button>
 
             {/* Privacy - Right Corner */}
@@ -55,7 +57,7 @@ export default function FooterLegal() {
               className={`${linkClass} right-8 sm:right-12`}
               onClick={() => setOverlayType('privacy')}
             >
-              Privacy Policy
+              {t('footer.privacy')}
             </motion.button>
           </>
         )}
