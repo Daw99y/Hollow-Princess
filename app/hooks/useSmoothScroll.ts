@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import Lenis from 'lenis';
+import type Lenis from 'lenis';
 import { CameraState } from '../types/camera';
 
 // Camera positions for each spline segment boundary
@@ -99,36 +99,51 @@ export function useSmoothScroll() {
 
   useEffect(() => {
     // Initialize Lenis smooth scroll
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      infinite: false,
-    });
+    const initLenis = async () => {
+      const Lenis = (await import('lenis')).default;
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        infinite: false,
+      });
 
-    lenisRef.current = lenis;
+      lenisRef.current = lenis;
 
-    // Animation loop for Lenis
-    function raf(time: number) {
-      lenis.raf(time);
+      // Animation loop for Lenis
+      function raf(time: number) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
       requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
 
-    // Connect Lenis to window scroll
-    lenis.on('scroll', () => {
-      // This will be handled by the second useEffect
-    });
+      // Connect Lenis to window scroll
+      lenis.on('scroll', () => {
+        // This will be handled by the second useEffect
+      });
+      // Store cleanup function
+      (lenis as any).destroy = () => {
+        lenis.destroy();
+      };
+    };
+
+    initLenis();
 
     // Intersection Observer removed - scroll handler now controls all camera state updates
     // This prevents conflicting state updates that cause janky animation
 
     // Cleanup
     return () => {
-      lenis.destroy();
+      if (lenisRef.current) {
+        if ((lenisRef.current as any).destroy) {
+          (lenisRef.current as any).destroy();
+        } else {
+          lenisRef.current.destroy();
+        }
+      }
     };
   }, []);
 

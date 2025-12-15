@@ -11,10 +11,18 @@ import ContentSection from './components/ContentSection';
 import Link from 'next/link';
 import BottomNav from './components/BottomNav';
 import dynamic from 'next/dynamic';
-import ScrollyTellingSequence from './components/ScrollyTellingSequence';
-import ScrollyTellingLocations from './components/ScrollyTellingLocations';
-import ScrollyTellingPurchase from './components/ScrollyTellingPurchase';
-import ScrollyTellingOutro from './components/ScrollyTellingOutro';
+const ScrollyTellingSequence = dynamic(
+  () => import('./components/ScrollyTellingSequence')
+);
+const ScrollyTellingLocations = dynamic(
+  () => import('./components/ScrollyTellingLocations')
+);
+const ScrollyTellingPurchase = dynamic(
+  () => import('./components/ScrollyTellingPurchase')
+);
+const ScrollyTellingOutro = dynamic(
+  () => import('./components/ScrollyTellingOutro')
+);
 import MagneticSection from './components/MagneticSection';
 
 const DualitySplit = dynamic(() => import('./components/DualitySplit'));
