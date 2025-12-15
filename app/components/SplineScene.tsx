@@ -4,14 +4,14 @@ import { useEffect, useRef } from 'react';
 import Spline from '@splinetool/react-spline';
 import { Application } from '@splinetool/runtime';
 import { CameraState } from '../types/camera';
-import { useIsMobileOrTablet } from '../hooks/useDeviceType';
+import { useClientIsMobileOrTablet } from '../hooks/useDeviceType';
 
 interface SplineSceneProps {
   cameraState: CameraState;
 }
 
 export default function SplineScene({ cameraState }: SplineSceneProps) {
-  const isMobile = useIsMobileOrTablet();
+  const isMobile = useClientIsMobileOrTablet();
   const sceneUrl = isMobile
     ? 'https://prod.spline.design/jL28RVVYWYZQ48eo/scene.splinecode'
     : 'https://prod.spline.design/iu41ezeHIYG8Uwym/scene.splinecode';
